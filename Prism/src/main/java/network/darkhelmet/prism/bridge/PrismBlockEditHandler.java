@@ -23,12 +23,12 @@ public class PrismBlockEditHandler {
     @Subscribe
     public void wrapForLogging(EditSessionEvent event) {
         switch (weType) {
-            case WORLDEDIT, ASYNC_WORLDEDIT -> {
+            case WORLDEDIT:
+            case ASYNC_WORLDEDIT:
                 if (event.getStage() != EditSession.Stage.BEFORE_REORDER) return;
-            }
-            case FAST_ASYNC_WORLDEDIT -> {
+                break;
+            case FAST_ASYNC_WORLDEDIT:
                 if (event.getStage() != EditSession.Stage.BEFORE_HISTORY) return;
-            }
         }
 
         Actor actor = event.getActor();
