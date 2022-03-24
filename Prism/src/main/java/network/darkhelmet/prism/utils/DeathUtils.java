@@ -92,7 +92,6 @@ public class DeathUtils {
             case VOID -> "虚空";
             case CUSTOM -> "自定义";
             case DRYOUT -> "脱水";
-            case FREEZE -> "冻死";
             case POISON -> "中毒";
             case THORNS -> "荆棘";
             case WITHER -> "凋零";

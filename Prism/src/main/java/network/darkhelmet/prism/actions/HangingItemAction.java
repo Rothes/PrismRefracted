@@ -30,8 +30,6 @@ public class HangingItemAction extends GenericAction {
                 this.actionData.type = "栓绳";
             } else if (hanging instanceof ItemFrame) {
                 this.actionData.type = "物品展示框";
-            } else if (hanging instanceof GlowItemFrame) {
-                this.actionData.type = "发光的物品展示框";
             } else {
                 this.actionData.type = hanging.getType().name().toLowerCase();
             }
