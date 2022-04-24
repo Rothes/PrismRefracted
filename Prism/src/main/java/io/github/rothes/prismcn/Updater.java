@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import network.darkhelmet.prism.Prism;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 
 import java.io.BufferedReader;
@@ -18,10 +19,11 @@ import java.util.Map;
 public class Updater {
 
     private final String VERSION_CHANNCEL = "Stable-1.16";
-    private final int VERSION_NUMBER = 7;
+    private final int VERSION_NUMBER = 8;
     private final HashMap<String, Integer> msgTimesMap = new HashMap<>();
 
     public void start() {
+        new Metrics(Prism.getInstance(), 15030);
         Bukkit.getScheduler().runTaskTimerAsynchronously(Prism.getInstance(), () -> {
             try {
                 checkJson(getJson());
