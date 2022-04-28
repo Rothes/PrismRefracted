@@ -842,6 +842,7 @@ public class Prism extends JavaPlugin implements PrismApi {
         }
         ApiHandler.disableWorldEditHook();
         shutdownTasks();
+        audiences.close();
         super.onDisable();
     }
 
@@ -904,6 +905,13 @@ public class Prism extends JavaPlugin implements PrismApi {
             super.publish(record);
             flush();
         }
+    }
+
+    public void restoreCNChanges(CommandSender sender) {
+        final DatabaseUpdater up = new DatabaseUpdater(this);
+        up.restoreCNChanges();
+        messenger.sendMessage(sender, messenger.playerHeaderMsg(Component.text("还原已完成. 正在关闭插件.")));
+        Bukkit.getPluginManager().disablePlugin(this);
     }
 
     public PrismCommands getCommands() {
