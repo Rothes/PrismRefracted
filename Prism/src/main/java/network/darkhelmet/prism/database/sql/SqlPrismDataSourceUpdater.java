@@ -108,6 +108,25 @@ public class SqlPrismDataSourceUpdater implements PrismDataSourceUpdater {
     }
 
     @Override
+    public void v8_to_v9() {
+        throw new AssertionError("由于官方暂未合并此 PR 内容, 暂时禁止数据库架构升级至此版本.");
+        /*
+        if (hasCNColumn()) {
+            return;
+        }
+        String query = "ALTER TABLE `" + prefix + "data` ADD COLUMN `rollbacked` boolean NOT NULL DEFAULT 0";
+        try (
+                Connection conn = dataSource.getConnection();
+                PreparedStatement st = conn.prepareStatement(query)
+        ) {
+            st.executeUpdate(query);
+        } catch (SQLException e) {
+            dataSource.handleDataSourceException(e);
+        }
+        */
+    }
+
+    @Override
     public void restoreCNChanges() {
         dataSource.setPaused(true);
         // v2 changes
@@ -125,6 +144,7 @@ public class SqlPrismDataSourceUpdater implements PrismDataSourceUpdater {
 
     @Override
     public void v1_to_v2_cn() {
+        // Will remove if merged to official (#v8_to_v9)
         String query = "ALTER TABLE `" + prefix + "data` ADD COLUMN `rollbacked` boolean NOT NULL DEFAULT 0";
 
         try (
@@ -137,7 +157,11 @@ public class SqlPrismDataSourceUpdater implements PrismDataSourceUpdater {
         }
     }
 
-    @Override
+    /**
+     * Check if `rollbacked` already exists since Chinese Edition added it before the official.
+     *
+     * @return If `rollbacked` already exists.
+     */
     public Boolean hasCNColumn() {
         String query = "SELECT * FROM `" + prefix + "data`";
 

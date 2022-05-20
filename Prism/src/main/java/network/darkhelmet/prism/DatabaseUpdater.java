@@ -33,6 +33,7 @@ public class DatabaseUpdater {
         updates.add(prismDataSourceUpdater::v5_to_v6);
         updates.add(prismDataSourceUpdater::v6_to_v7);
         updates.add(prismDataSourceUpdater::v7_to_v8);
+        updates.add(prismDataSourceUpdater::v8_to_v9);
 
         updatesCN.add(prismDataSourceUpdater::v1_to_v2_cn);
         checkColumnCN = prismDataSourceUpdater::hasCNColumn;
