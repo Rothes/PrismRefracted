@@ -7,7 +7,6 @@ import network.darkhelmet.prism.appliers.ChangeResultImpl;
 import network.darkhelmet.prism.utils.MiscUtils;
 import org.bukkit.TreeSpecies;
 import org.bukkit.entity.Boat;
-import org.bukkit.entity.ChestBoat;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Player;
@@ -46,8 +45,6 @@ public class VehicleAction extends GenericAction {
             actionData.vehicleName = "运输矿车";
         } else if (vehicle instanceof Boat) {
             actionData.vehicleName = "船";
-        } else if (vehicle instanceof ChestBoat) {
-            actionData.vehicleName = "运输船";
         } else {
             actionData.vehicleName = vehicle.getType().name().toLowerCase();
         }
@@ -142,9 +139,6 @@ public class VehicleAction extends GenericAction {
                 break;
             case "船":
                 vehicle = getWorld().spawn(getLoc(), Boat.class);
-                break;
-            case "运输船":
-                vehicle = getWorld().spawn(getLoc(), ChestBoat.class);
                 break;
             default:
                 //null

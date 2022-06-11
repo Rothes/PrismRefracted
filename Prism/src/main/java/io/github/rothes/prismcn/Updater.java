@@ -25,7 +25,7 @@ import java.util.Map;
 
 public class Updater implements Listener {
 
-    private final String VERSION_CHANNCEL = "Stable";
+    private final String VERSION_CHANNCEL = "Stable-1.17-1.18";
     private final int VERSION_NUMBER = YamlConfiguration.loadConfiguration(new InputStreamReader(
             Prism.getInstance().getResource("metadata.yml"), StandardCharsets.UTF_8)).getInt("versionId");
     private final HashMap<String, Integer> msgTimesMap = new HashMap<>();
