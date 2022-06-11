@@ -40,11 +40,12 @@ dependencies {
     compileOnly 'org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT'
     compileOnly 'com.sk89q.worldedit:worldedit-core:7.2.0-SNAPSHOT'
     compileOnly 'com.sk89q.worldedit:worldedit-bukkit:7.2.0-SNAPSHOT'
+    implementation 'org.apache.commons:commons-lang3:3.12.0'
     implementation 'io.papermc:paperlib:1.0.3'
     implementation 'com.zaxxer:HikariCP:4.0.3'
-    implementation 'net.kyori:adventure-api:4.9.3'
-    implementation 'net.kyori:adventure-platform-bukkit:4.0.2-SNAPSHOT'
-    implementation 'net.kyori:adventure-text-serializer-plain:4.9.3'
+    implementation 'net.kyori:adventure-api:4.11.0'
+    implementation 'net.kyori:adventure-platform-bukkit:4.1.0'
+    implementation 'net.kyori:adventure-text-serializer-plain:4.11.0'
     implementation 'org.kitteh:paste-gg-api:1.0.0-SNAPSHOT'
     implementation 'org.bstats:bstats-bukkit:3.0.0'
     implementation project(':Prism-Api')
@@ -64,12 +65,14 @@ shadowJar {
         exclude(dependency('org.slf4j:.*'))
         exclude(dependency('org.intellij:.*'))
         exclude(dependency('org.jetbrains:.*'))
+        exclude(dependency('com.google.code.gson:.*'))
     }
 
     relocate 'io.papermc.lib', 'network.darkhelmet.prism.paperlib'
     relocate 'com.zaxxer', 'network.darkhelmet.prism.zaxxer'
     relocate 'net.kyori', 'network.darkhelmet.prism.kyori'
     relocate 'org.kitteh', 'network.darkhelmet.prism.kitteh'
+    relocate 'org.apache', 'network.darkhelmet.prism.apache'
     relocate 'org.bstats', 'io.github.rothes.prismcn.lib.org.bstats'
 
     minimize()
@@ -83,15 +86,16 @@ runServer {
 }
 
 gradle.buildFinished {
+    // Clean Gradle resources cache
     deleteDirectory(new File(project.buildDir, "resources/"))
 }
 
-boolean deleteDirectory(File directoryToBeDeleted) {
-    File[] allContents = directoryToBeDeleted.listFiles();
-    if (allContents != null) {
-        for (File file : allContents) {
+boolean deleteDirectory(File directory) {
+    File[] contents = directory.listFiles();
+    if (contents != null) {
+        for (File file : contents) {
             deleteDirectory(file);
         }
     }
-    return directoryToBeDeleted.delete();
+    return directory.delete();
 }

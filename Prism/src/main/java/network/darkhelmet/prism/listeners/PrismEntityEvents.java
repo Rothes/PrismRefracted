@@ -8,15 +8,13 @@ import network.darkhelmet.prism.utils.InventoryUtils;
 import network.darkhelmet.prism.utils.MaterialTag;
 import network.darkhelmet.prism.utils.MiscUtils;
 import network.darkhelmet.prism.utils.WandUtils;
-import io.github.rothes.prismcn.PrismLocalization;
+import io.github.rothes.prismcn.CNLocalization;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Creeper;
-import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Enderman;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -25,11 +23,11 @@ import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
-import org.bukkit.entity.TNTPrimed;
 import org.bukkit.entity.Wither;
 import org.bukkit.entity.minecart.PoweredMinecart;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.block.EntityBlockFormEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityBreakDoorEvent;
@@ -38,7 +36,6 @@ import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.EntityUnleashEvent;
 import org.bukkit.event.entity.PlayerLeashEntityEvent;
@@ -65,17 +62,16 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.UUID;
 
-public class PrismEntityEvents extends BaseListener {
+public class PrismEntityEvents implements Listener {
 
-    private final PrismLocalization prismLocalization;
+    private final Prism plugin;
 
     /**
      * Constructor.
-     * @param plugin Plugin
+     * @param plugin Prism
      */
     public PrismEntityEvents(Prism plugin) {
-        super(plugin);
-        prismLocalization = plugin.getPrismLocalization();
+        this.plugin = plugin;
     }
 
     /**
@@ -127,8 +123,7 @@ public class PrismEntityEvents extends BaseListener {
         if (!(entity instanceof Player)) {
             // Log item drops
             if (Prism.getIgnore().event("item-drop", entity.getWorld())) {
-                String name = prismLocalization.hasEntityLocale(entity.getType().name()) ?
-                        prismLocalization.getEntityLocale(entity.getType().name()) : entity.getType().name().toLowerCase();
+                String name = CNLocalization.getEntityLocale(entity.getType());
 
                 // Inventory
                 if (entity instanceof InventoryHolder) {
@@ -691,8 +686,7 @@ public class PrismEntityEvents extends BaseListener {
             return;
         }
         RecordingQueue.addToQueue(ActionFactory.createBlock("entity-break", event.getBlock(),
-                prismLocalization.hasEntityLocale(event.getEntityType().name()) ?
-                        prismLocalization.getEntityLocale(event.getEntityType().name()) : event.getEntityType().name().toLowerCase()));
+                CNLocalization.getEntityLocale(event.getEntityType())));
     }
 
     /**
@@ -774,8 +768,7 @@ public class PrismEntityEvents extends BaseListener {
         final Collection<PotionEffect> potion = event.getPotion().getEffects();
         String name = "";
         for (final PotionEffect eff : potion) {
-            name = prismLocalization.hasEffectLocale(eff.getType().getName()) ?
-                    prismLocalization.getEffectLocale(eff.getType().getName()) : eff.getType().getName().toLowerCase();
+            name = CNLocalization.getEffectLocale(eff.getType());
         }
 
         RecordingQueue.addToQueue(ActionFactory.createPlayer("potion-splash", player, name));
@@ -891,8 +884,7 @@ public class PrismEntityEvents extends BaseListener {
         if (!Prism.getIgnore().event("hangingitem-break", event.getEntity().getWorld())) {
             return;
         }
-        String breakingName = (remover == null) ? "NULL" : prismLocalization.hasEntityLocale(remover.getType().name()) ?
-                prismLocalization.getEntityLocale(remover.getType().name()) : remover.getType().name().toLowerCase();
+        String breakingName = (remover == null) ? "NULL" : CNLocalization.getEntityLocale(remover.getType());
         if (player != null) {
             RecordingQueue.addToQueue(ActionFactory.createHangingItem("hangingitem-break", event.getEntity(), player));
         } else {
@@ -980,87 +972,9 @@ public class PrismEntityEvents extends BaseListener {
             RecordingQueue.addToQueue(ActionFactory.createBlockChange("entity-form", block.getType(),
                     block.getBlockData(), newState, player));
         } else {
-            final String entity = prismLocalization.hasEntityLocale(event.getEntity().getType().name()) ?
-                    prismLocalization.getEntityLocale(event.getEntity().getType().name()) : event.getEntity().getType().name().toLowerCase();
+            final String entity = CNLocalization.getEntityLocale(event.getEntity().getType());
             RecordingQueue.addToQueue(ActionFactory.createBlockChange("entity-form", block.getType(),
                     block.getBlockData(), newState, entity));
         }
-    }
-
-    /**
-     * EntityExplodeEvent.
-     * @param event EntityExplodeEvent
-     */
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onEntityExplodeChangeBlock(final EntityExplodeEvent event) {
-
-        if (event.blockList().isEmpty()) {
-            return;
-        }
-        String name;
-        String action = "entity-explode";
-        if (event.getEntity() != null) {
-            if (event.getEntity() instanceof Creeper) {
-                if (!Prism.getIgnore().event("creeper-explode", event.getEntity().getWorld())) {
-                    return;
-                }
-                action = "creeper-explode";
-                name = "苦力怕";
-            } else if (event.getEntity() instanceof TNTPrimed) {
-                if (!Prism.getIgnore().event("tnt-explode", event.getEntity().getWorld())) {
-                    return;
-                }
-                action = "tnt-explode";
-                Entity source = ((TNTPrimed) event.getEntity()).getSource();
-                name = followTntTrail(source);
-            } else if (event.getEntity() instanceof EnderDragon) {
-                if (!Prism.getIgnore().event("dragon-eat", event.getEntity().getWorld())) {
-                    return;
-                }
-                action = "dragon-eat";
-                name = "末影龙";
-            } else {
-                if (!Prism.getIgnore().event("entity-explode", event.getLocation().getWorld())) {
-                    return;
-                }
-                try {
-                    name = event.getEntity().getType().name().toLowerCase().replace("_", " ");
-                    name = name.length() > 15 ? name.substring(0, 15) : name; // I
-                } catch (final NullPointerException e) {
-                    name = "未知";
-                }
-            }
-        } else {
-            if (!Prism.getIgnore().event("entity-explode", event.getLocation().getWorld())) {
-                return;
-            }
-            name = "魔法";
-        }
-        contructBlockEvent(action,name,event.blockList());
-    }
-
-    private String followTntTrail(Entity initial) {
-        int counter = 10000000;
-
-        while (initial != null) {
-            if (initial instanceof Player) {
-                return initial.getName();
-            } else if (initial instanceof TNTPrimed) {
-                initial = (((TNTPrimed) initial).getSource());
-                if (counter < 0 && initial != null) {
-                    Location last = initial.getLocation();
-                    plugin.getLogger().warning("连锁TNT已超过一百万, 不会继续跟踪!");
-                    plugin.getLogger().warning("最后一个TNT在 " + last.getX() + ", " + last.getY() + ". "
-                            + last.getZ() + " 世界为 " + last.getWorld());
-                    return "TNT";
-                }
-                counter--;
-            } else {
-                return prismLocalization.hasEntityLocale(initial.getType().name()) ?
-                        prismLocalization.getEntityLocale(initial.getType().name()) : initial.getType().name();
-            }
-        }
-
-        return "TNT";
     }
 }

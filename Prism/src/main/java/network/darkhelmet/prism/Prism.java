@@ -1,6 +1,6 @@
 package network.darkhelmet.prism;
 
-import io.github.rothes.prismcn.PrismLocalization;
+import io.github.rothes.prismcn.CNLocalization;
 import io.github.rothes.prismcn.Updater;
 import io.papermc.lib.PaperLib;
 import network.darkhelmet.prism.actionlibs.ActionRegistry;
@@ -26,6 +26,7 @@ import network.darkhelmet.prism.listeners.PaperListeners;
 import network.darkhelmet.prism.listeners.PrismBlockEvents;
 import network.darkhelmet.prism.listeners.PrismCustomEvents;
 import network.darkhelmet.prism.listeners.PrismEntityEvents;
+import network.darkhelmet.prism.listeners.PrismExplodeEvents;
 import network.darkhelmet.prism.listeners.PrismInventoryEvents;
 import network.darkhelmet.prism.listeners.PrismInventoryMoveItemEvent;
 import network.darkhelmet.prism.listeners.PrismPlayerEvents;
@@ -154,12 +155,6 @@ public class Prism extends JavaPlugin implements PrismApi {
     private String pluginVersion;
     // private ScheduledFuture<?> scheduledPurgeExecutor;
     private PurgeManager purgeManager;
-    // Materials & Entities Locale.
-    private PrismLocalization prismLocalization;
-
-    public PrismLocalization getPrismLocalization() {
-        return prismLocalization;
-    }
 
     public Prism() {
         instance = this;
@@ -393,8 +388,7 @@ public class Prism extends JavaPlugin implements PrismApi {
         pluginVersion = this.getDescription().getVersion();
         audiences = BukkitAudiences.create(this);
         messenger = new Messenger(pluginName, Prism.getAudiences());
-        prismLocalization = new PrismLocalization();
-        prismLocalization.initialize(instance);
+        CNLocalization.initialize(instance);
         log("正在初始化 Prism " + pluginVersion + ". 作者 Viveleroi; 汉化 Rothes");
         log("");
         log("§a=============================================================");
@@ -534,6 +528,7 @@ public class Prism extends JavaPlugin implements PrismApi {
 
             // Assign event listeners
             getServer().getPluginManager().registerEvents(new PrismBlockEvents(this), this);
+            getServer().getPluginManager().registerEvents(new PrismExplodeEvents(this), this);
             getServer().getPluginManager().registerEvents(new PrismEntityEvents(this), this);
             getServer().getPluginManager().registerEvents(new PrismWorldEvents(), this);
             getServer().getPluginManager().registerEvents(new PrismPlayerEvents(this), this);
