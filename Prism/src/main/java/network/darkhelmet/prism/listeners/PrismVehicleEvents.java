@@ -8,7 +8,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.ChestBoat;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Vehicle;
@@ -98,42 +97,6 @@ public class PrismVehicleEvents implements Listener {
                 Entity passenger = passengers.get(0);
                 handlePlayerAction(passenger, vehicle, "vehicle-break");
             }
-        }
-
-        if (vehicle instanceof ChestBoat) {
-            ChestBoat chestBoat = (ChestBoat) vehicle;
-            for (final ItemStack item : chestBoat.getInventory().getContents()) {
-                if (item != null && item.getType() != Material.AIR) {
-                    String woodType;
-                    switch (chestBoat.getWoodType()) {
-                        case GENERIC:
-                            woodType = "橡木";
-                            break;
-                        case REDWOOD:
-                            woodType = "红树木";
-                            break;
-                        case BIRCH:
-                            woodType = "白桦木";
-                            break;
-                        case JUNGLE:
-                            woodType = "从林木";
-                            break;
-                        case ACACIA:
-                            woodType = "金合欢木";
-                            break;
-                        case DARK_OAK:
-                            woodType = "深色橡木";
-                            break;
-                        default:
-                            woodType = chestBoat.getWoodType().name().toLowerCase() + " ";
-                            break;
-                    }
-                    RecordingQueue.addToQueue(ActionFactory.createItemStack("item-drop", item,
-                            item.getAmount(), -1, null, vehicle.getLocation(),
-                            woodType + "运输船"));
-                }
-            }
-
         }
     }
 
