@@ -116,6 +116,10 @@ public class CNLocalization {
                     materialLocalize.put(value, "黑色旗帜");
                     break;
                 default:
+                    if (value.isLegacy()) {
+                        // For some servers.
+                        break;
+                    }
                     JsonElement element = object.get("item.minecraft." + value.getKey().getKey());
                     if (element == null) {
                         element = object.get("block.minecraft." + value.getKey().getKey());
