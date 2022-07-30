@@ -24,9 +24,9 @@ repositories {
     maven { url = 'https://maven.addstar.com.au/artifactory/all-snapshot' }
 }
 
-group = "network.darkhelmet"
+group = project.property("group")
 version = project.property("version")
-sourceCompatibility = targetCompatibility = JavaVersion.VERSION_17
+sourceCompatibility = targetCompatibility = JavaVersion.VERSION_16
 
 processResources {
     filter ReplaceTokens, tokens: [

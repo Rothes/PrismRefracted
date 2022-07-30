@@ -29,6 +29,8 @@ public class PrismVehicleEvents implements Listener {
 
     private final Prism plugin;
 
+    private final byte serverMajorVersion;
+
     /**
      * Constructor.
      *
@@ -36,6 +38,7 @@ public class PrismVehicleEvents implements Listener {
      */
     public PrismVehicleEvents(Prism plugin) {
         this.plugin = plugin;
+        serverMajorVersion = plugin.getServerMajorVersion();
     }
 
     /**
@@ -101,7 +104,7 @@ public class PrismVehicleEvents implements Listener {
             }
         }
 
-        if (vehicle instanceof ChestBoat) {
+        if (serverMajorVersion >= 19 && vehicle instanceof ChestBoat) {
             ChestBoat chestBoat = (ChestBoat) vehicle;
             for (final ItemStack item : chestBoat.getInventory().getContents()) {
                 if (item != null && item.getType() != Material.AIR) {

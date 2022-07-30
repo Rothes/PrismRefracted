@@ -5,6 +5,9 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import network.darkhelmet.prism.Prism;
 import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.potion.PotionEffectType;
@@ -25,6 +28,14 @@ public class CNLocalization {
     private static final HashMap<String, String> entityLocalizeRestore = new HashMap<>();
 
     public static void initialize(Prism plugin) {
+        YamlConfiguration yaml = new YamlConfiguration();
+        try {
+            yaml.load(new InputStreamReader(plugin.getResource("languages/Spigot-Lang.yml"), StandardCharsets.UTF_8));
+        } catch (IOException | InvalidConfigurationException exception) {
+            exception.printStackTrace();
+            return;
+        }
+
         JsonElement root;
         try {
             InputStream stream = plugin.getResource("languages/Minecraft-Lang.json");
@@ -119,12 +130,22 @@ public class CNLocalization {
             }
         }
         for (PotionEffectType value : PotionEffectType.values()) {
-            JsonElement element = object.get("effect.minecraft." + value.getKey().getKey());
-            if (element == null) {
-                Prism.warn("缺少本地化语言: PotionEffectType = " + value.getKey().getKey());
-                effectLocalize.put(value, value.getKey().getKey().toLowerCase().replace("_", " "));
+            if (Prism.getInstance().getServerMajorVersion() >= 19) {
+                JsonElement element = object.get("effect.minecraft." + value.getKey().getKey());
+                if (element == null) {
+                    Prism.warn("缺少本地化语言: PotionEffectType = " + value.getKey().getKey());
+                    effectLocalize.put(value, value.getKey().getKey().toLowerCase().replace("_", " "));
+                } else {
+                    effectLocalize.put(value, element.getAsString());
+                }
             } else {
-                effectLocalize.put(value, element.getAsString());
+                String locale = yaml.getString("Effect." + value.getName());
+                if (locale == null) {
+                    Prism.warn("缺少本地化语言: PotionEffectType = " + value.getName());
+                    effectLocalize.put(value, value.getName().toLowerCase().replace("_", " "));
+                } else {
+                    effectLocalize.put(value, locale);
+                }
             }
         }
         for (Enchantment value : Enchantment.values()) {
