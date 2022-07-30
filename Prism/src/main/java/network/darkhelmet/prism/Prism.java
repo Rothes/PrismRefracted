@@ -145,6 +145,7 @@ public class Prism extends JavaPlugin implements PrismApi {
     public BukkitTask recordingTask;
     public int totalRecordsAffected = 0;
     public long maxCycleTime = 0;
+    private byte serverMajorVersion;
 
     /**
      * We store a basic index of hanging entities we anticipate will fall, so that
@@ -183,7 +184,7 @@ public class Prism extends JavaPlugin implements PrismApi {
             debugWatcher = Bukkit.getScheduler().runTaskTimerAsynchronously(Prism.getInstance(), () -> {
                 for (Player p : Bukkit.getOnlinePlayers()) {
                     if (p.hasPermission("prism.debug")) {
-                        p.sendMessage("警告 : 已开启 Prism 的调试模式 - "
+                        p.sendMessage("警告: 已开启 Prism 的调试模式 - "
                                 + " 日志会迅速地生成!!!");
                     }
                 }
@@ -377,6 +378,10 @@ public class Prism extends JavaPlugin implements PrismApi {
         return schedulePool;
     }
 
+    public byte getServerMajorVersion() {
+        return serverMajorVersion;
+    }
+
     /**
      * Enables the plugin and activates our player listeners.
      */
@@ -397,6 +402,7 @@ public class Prism extends JavaPlugin implements PrismApi {
         log("§2 * 此汉化的 GitHub 为 https://github.com/Rothes/PrismRefracted");
         log("§a=============================================================");
         log("");
+        serverMajorVersion = Byte.parseByte(Bukkit.getServer().getBukkitVersion().split("\\.")[1].split("-")[0]);
         loadConfig();        // Load configuration, or install if new
         isPaper = PaperLib.isPaper();
         if (isPaper) {
@@ -653,7 +659,7 @@ public class Prism extends JavaPlugin implements PrismApi {
                 String colorString = alertBlocks.getString(key);
 
                 if (m == null || colorString == null) {
-                    Prism.log("匹配不到警戒方块:" + key + " 色彩:" + colorString);
+                    Prism.log("匹配不到警告方块:" + key + ", 颜色:" + colorString);
                     continue;
                 }
                 TextColor color = TypeUtils.from(colorString);
@@ -831,7 +837,7 @@ public class Prism extends JavaPlugin implements PrismApi {
         if (prismDataSource != null) {
             prismDataSource.dispose();
         }
-        log("插件已关闭.");
+        log("正在关闭插件.");
         for (Handler handler : prismLog.getHandlers()) {
             handler.close();
         }

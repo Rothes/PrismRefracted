@@ -1,5 +1,6 @@
 package network.darkhelmet.prism.actions;
 
+import network.darkhelmet.prism.Prism;
 import network.darkhelmet.prism.api.ChangeResult;
 import network.darkhelmet.prism.api.ChangeResultType;
 import network.darkhelmet.prism.api.PrismParameters;
@@ -18,6 +19,8 @@ import org.bukkit.entity.minecart.SpawnerMinecart;
 import org.bukkit.entity.minecart.StorageMinecart;
 
 public class VehicleAction extends GenericAction {
+
+    private static byte serverMajorVersion = Prism.getInstance().getServerMajorVersion();
 
     private VehicleActionData actionData;
 

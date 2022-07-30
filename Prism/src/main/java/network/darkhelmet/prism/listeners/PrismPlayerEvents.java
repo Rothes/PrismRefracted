@@ -423,8 +423,6 @@ public class PrismPlayerEvents implements Listener {
                     return;
                 }
                 RecordingQueue.addToQueue(ActionFactory.createBlock("block-use", block, player));
-            } else if (MaterialTag.GROWABLE.isTagged(block.getType())) {
-                recordBoneMealEvent(block, hand, player);
             } else {
                 switch (block.getType()) {
                     case JUKEBOX:
@@ -521,22 +519,6 @@ public class PrismPlayerEvents implements Listener {
             action.setMaterial(Material.COCOA);
             action.setBlockData(block.getBlockData());
             RecordingQueue.addToQueue(action);
-        }
-    }
-
-    /**
-     * recordBoneMealEvent.
-     *
-     * @param block  Block
-     * @param inhand ItemStack
-     * @param player Player
-     */
-    private void recordBoneMealEvent(Block block, ItemStack inhand, Player player) {
-        if (inhand.getType() == Material.BONE_MEAL) {
-            if (!Prism.getIgnore().event("bonemeal-use", block)) {
-                return;
-            }
-            RecordingQueue.addToQueue(ActionFactory.createUse("bonemeal-use", inhand.getType(), block, player));
         }
     }
 
