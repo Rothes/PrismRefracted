@@ -64,13 +64,21 @@ public class HelpCommand implements SubHandler {
                         .append(
                               Prism.messenger.playerMsg(Il8nHelper.getMessage("prism-disabled-content"))
                                     .color(NamedTextColor.GOLD))
-                        .append(Component.newline())
-                        .append(
-                                Component.text().content("Discord: ")
-                                        .append(Component.text("https://discord.gg/7FxZScH4EJ")
-                                                .color(NamedTextColor.WHITE))
-                                        .clickEvent(ClickEvent.openUrl("https://discord.gg/7FxZScH4EJ"))
-                                        .build()));
+                          .append(Component.newline())
+                          .append(
+                                  Component.text().content("Discord: ")
+                                          .append(Component.text("https://discord.gg/7FxZScH4EJ")
+                                                  .color(NamedTextColor.WHITE))
+                                          .clickEvent(ClickEvent.openUrl("https://discord.gg/7FxZScH4EJ"))
+                                          .build())
+                          .append(Component.newline())
+                          .append(
+                                  Component.text().content("QQ群: ")
+                                          .color(NamedTextColor.GOLD)
+                                          .append(Component.text("422532220")
+                                                  .color(NamedTextColor.WHITE))
+                                          .clickEvent(ClickEvent.openUrl("https://qm.qq.com/cgi-bin/qm/qr?k=mDtcrvBGzqbA05mPLzBnPAYXm5lskYxg&jump_from=webapi"))
+                                          .build()));
             return;
         }
         TextComponent component = Prism.messenger.playerHeaderMsg(
