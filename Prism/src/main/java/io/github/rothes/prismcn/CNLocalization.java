@@ -5,7 +5,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import network.darkhelmet.prism.Prism;
 import org.bukkit.Material;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
@@ -17,6 +16,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.Set;
 
 public class CNLocalization {
 
@@ -26,6 +26,7 @@ public class CNLocalization {
     private static final HashMap<Enchantment, String> enchantmentLocalize = new HashMap<>();
 
     private static final HashMap<String, String> entityLocalizeRestore = new HashMap<>();
+    private static final HashMap<String, String> materialLocalizeRestore = new HashMap<>();
 
     public static void initialize(Prism plugin) {
         YamlConfiguration yaml = new YamlConfiguration();
@@ -69,51 +70,67 @@ public class CNLocalization {
             switch (value) {
                 case WHITE_WALL_BANNER:
                     materialLocalize.put(value, "白色旗帜");
+                    materialLocalizeRestore.put("白色旗帜", value.name());
                     break;
                 case ORANGE_WALL_BANNER:
                     materialLocalize.put(value, "橙色旗帜");
+                    materialLocalizeRestore.put("橙色旗帜", value.name());
                     break;
                 case MAGENTA_WALL_BANNER:
                     materialLocalize.put(value, "品红色旗帜");
+                    materialLocalizeRestore.put("品红色旗帜", value.name());
                     break;
                 case LIGHT_BLUE_WALL_BANNER:
                     materialLocalize.put(value, "淡蓝色旗帜");
+                    materialLocalizeRestore.put("淡蓝色旗帜", value.name());
                     break;
                 case YELLOW_WALL_BANNER:
                     materialLocalize.put(value, "黄色旗帜");
+                    materialLocalizeRestore.put("黄色旗帜", value.name());
                     break;
                 case LIME_WALL_BANNER:
                     materialLocalize.put(value, "黄绿色旗帜");
+                    materialLocalizeRestore.put("黄绿色旗帜", value.name());
                     break;
                 case PINK_WALL_BANNER:
                     materialLocalize.put(value, "粉红色旗帜");
+                    materialLocalizeRestore.put("粉红色旗帜", value.name());
                     break;
                 case GRAY_WALL_BANNER:
                     materialLocalize.put(value, "灰色旗帜");
+                    materialLocalizeRestore.put("灰色旗帜", value.name());
                     break;
                 case LIGHT_GRAY_WALL_BANNER:
                     materialLocalize.put(value, "淡灰色旗帜");
+                    materialLocalizeRestore.put("淡灰色旗帜", value.name());
                     break;
                 case CYAN_WALL_BANNER:
                     materialLocalize.put(value, "青色旗帜");
+                    materialLocalizeRestore.put("青色旗帜", value.name());
                     break;
                 case PURPLE_WALL_BANNER:
                     materialLocalize.put(value, "紫色旗帜");
+                    materialLocalizeRestore.put("紫色旗帜", value.name());
                     break;
                 case BLUE_WALL_BANNER:
                     materialLocalize.put(value, "蓝色旗帜");
+                    materialLocalizeRestore.put("蓝色旗帜", value.name());
                     break;
                 case BROWN_WALL_BANNER:
                     materialLocalize.put(value, "棕色旗帜");
+                    materialLocalizeRestore.put("棕色旗帜", value.name());
                     break;
                 case GREEN_WALL_BANNER:
                     materialLocalize.put(value, "绿色旗帜");
+                    materialLocalizeRestore.put("绿色旗帜", value.name());
                     break;
                 case RED_WALL_BANNER:
                     materialLocalize.put(value, "红色旗帜");
+                    materialLocalizeRestore.put("红色旗帜", value.name());
                     break;
                 case BLACK_WALL_BANNER:
                     materialLocalize.put(value, "黑色旗帜");
+                    materialLocalizeRestore.put("黑色旗帜", value.name());
                     break;
                 default:
                     if (value.isLegacy()) {
@@ -127,8 +144,10 @@ public class CNLocalization {
                     if (element == null) {
                         Prism.warn("缺少本地化语言: Material = " + value.name());
                         materialLocalize.put(value, value.name().toLowerCase().replace("_", " "));
+                        materialLocalizeRestore.put(value.name().toLowerCase().replace("_", " "), value.name());
                     } else {
                         materialLocalize.put(value, element.getAsString());
+                        materialLocalizeRestore.put(element.getAsString(), value.name());
                     }
                     break;
             }
@@ -187,6 +206,10 @@ public class CNLocalization {
 
     public static String restoreEntityLocale(String type) {
         return entityLocalizeRestore.getOrDefault(type, type);
+    }
+
+    public static String restoreMaterialLocale(String type) {
+        return materialLocalizeRestore.getOrDefault(type, type);
     }
 
 }
