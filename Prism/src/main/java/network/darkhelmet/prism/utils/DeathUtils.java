@@ -74,38 +74,68 @@ public class DeathUtils {
         }
 
         // Causes of death for either entities or players
-        return switch (damageCause) {
-            case ENTITY_ATTACK -> "生物";
-            case PROJECTILE -> "骷髅";
-            case ENTITY_EXPLOSION -> "苦力怕";
-            case CONTACT -> "仙人掌";
-            case BLOCK_EXPLOSION -> "TNT";
-            case FIRE -> "火";
-            case FIRE_TICK -> "火焰刻";
-            case MAGIC -> "魔法";
-            case SUICIDE -> "自杀";
-            case FALL -> "摔落";
-            case LAVA -> "熔岩";
-            case VOID -> "虚空";
-            case CUSTOM -> "自定义";
-            case DRYOUT -> "脱水";
-            case FREEZE -> "冻死";
-            case POISON -> "中毒";
-            case THORNS -> "荆棘";
-            case WITHER -> "凋零";
-            case MELTING -> "雪人融化";
-            case CRAMMING -> "过度挤压";
-            case DROWNING -> "溺水";
-            case HOT_FLOOR -> "岩浆块";
-            case LIGHTNING -> "闪电";
-            case STARVATION -> "饿死";
-            case SUFFOCATION -> "卡方块里了";
-            case DRAGON_BREATH -> "龙息";
-            case FALLING_BLOCK -> "下落的方块";
-            case FLY_INTO_WALL -> "飞行时撞到墙上";
-            case ENTITY_SWEEP_ATTACK -> "横扫伤害";
-            default -> damageCause.name().toLowerCase();
-        };
+        switch (damageCause) {
+            case ENTITY_ATTACK:
+                return "生物";
+            case PROJECTILE:
+                return "骷髅";
+            case ENTITY_EXPLOSION:
+                return "苦力怕";
+            case CONTACT:
+                return "仙人掌";
+            case BLOCK_EXPLOSION:
+                return "TNT";
+            case FIRE:
+                return "火";
+            case FIRE_TICK:
+                return "火焰刻";
+            case MAGIC:
+                return "魔法";
+            case SUICIDE:
+                return "自杀";
+            case FALL:
+                return "摔落";
+            case LAVA:
+                return "熔岩";
+            case VOID:
+                return "虚空";
+            case CUSTOM:
+                return "自定义";
+            case DRYOUT:
+                return "脱水";
+            case FREEZE:
+                return "冻死";
+            case POISON:
+                return "中毒";
+            case THORNS:
+                return "荆棘";
+            case WITHER:
+                return "凋零";
+            case MELTING:
+                return "雪人融化";
+            case CRAMMING:
+                return "过度挤压";
+            case DROWNING:
+                return "溺水";
+            case HOT_FLOOR:
+                return "岩浆块";
+            case LIGHTNING:
+                return "闪电";
+            case STARVATION:
+                return "饿死";
+            case SUFFOCATION:
+                return "卡方块里了";
+            case DRAGON_BREATH:
+                return "龙息";
+            case FALLING_BLOCK:
+                return "下落的方块";
+            case FLY_INTO_WALL:
+                return "飞行时撞到墙上";
+            case ENTITY_SWEEP_ATTACK:
+                return "横扫伤害";
+            default:
+                return damageCause.name().toLowerCase();
+        }
     }
 
     /**
