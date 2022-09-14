@@ -74,7 +74,6 @@ public class HelpCommand implements SubHandler {
                           .append(Component.newline())
                           .append(
                                   Component.text().content("QQ群: ")
-                                          .color(NamedTextColor.GOLD)
                                           .append(Component.text("422532220")
                                                   .color(NamedTextColor.WHITE))
                                           .clickEvent(ClickEvent.openUrl("https://qm.qq.com/cgi-bin/qm/qr?k=mDtcrvBGzqbA05mPLzBnPAYXm5lskYxg&jump_from=webapi"))
