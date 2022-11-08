@@ -15,8 +15,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Set;
+import java.util.List;
+import java.util.logging.Level;
 
 public class CNLocalization {
 
@@ -32,24 +34,23 @@ public class CNLocalization {
         YamlConfiguration yaml = new YamlConfiguration();
         try {
             yaml.load(new InputStreamReader(plugin.getResource("languages/Spigot-Lang.yml"), StandardCharsets.UTF_8));
-        } catch (IOException | InvalidConfigurationException exception) {
-            exception.printStackTrace();
-            return;
+        } catch (IOException | InvalidConfigurationException | NullPointerException exception) {
+            Prism.getInstance().getLogger().log(Level.WARNING, "无法加载本地化语言文件", exception);
         }
 
         JsonElement root;
-        try {
-            InputStream stream = plugin.getResource("languages/Minecraft-Lang.json");
-            InputStreamReader reader = new InputStreamReader(stream, StandardCharsets.UTF_8);
+        try (
+                InputStream stream = plugin.getResource("languages/Minecraft-Lang.json");
+                InputStreamReader reader = new InputStreamReader(stream, StandardCharsets.UTF_8)
+        ){
             root = new JsonParser().parse(reader);
-            reader.close();
-            stream.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-            Prism.warn("无法加载本地化语言文件");
-            return;
+        } catch (IOException | NullPointerException e) {
+            Prism.getInstance().getLogger().log(Level.WARNING, "无法加载本地化语言文件", e);
+            root = new JsonParser().parse("{How=\"How\"}");
         }
         JsonObject object = root.getAsJsonObject();
+
+        List<String> missing = new ArrayList<>();
         for (EntityType value : EntityType.values()) {
             if (value == EntityType.UNKNOWN) {
                 entityLocalize.put(value, "未知");
@@ -57,7 +58,7 @@ public class CNLocalization {
             }
             JsonElement element = object.get("entity.minecraft." + value.getKey().getKey());
             if (element == null) {
-                Prism.warn("缺少本地化语言: EntityType = " + value.name());
+                missing.add(value.name());
                 entityLocalize.put(value, value.name().toLowerCase().replace("_", " "));
                 entityLocalizeRestore.put(value.name().toLowerCase().replace("_", " "), value.name());
             } else {
@@ -65,6 +66,8 @@ public class CNLocalization {
                 entityLocalizeRestore.put(element.getAsString(), value.name());
             }
         }
+        warnMissing("EntityType", missing);
+        missing.clear();
 
         for (Material value : Material.values()) {
             switch (value) {
@@ -142,7 +145,7 @@ public class CNLocalization {
                         element = object.get("block.minecraft." + value.getKey().getKey());
                     }
                     if (element == null) {
-                        Prism.warn("缺少本地化语言: Material = " + value.name());
+                        missing.add(value.name());
                         materialLocalize.put(value, value.name().toLowerCase().replace("_", " "));
                         materialLocalizeRestore.put(value.name().toLowerCase().replace("_", " "), value.name());
                     } else {
@@ -152,11 +155,14 @@ public class CNLocalization {
                     break;
             }
         }
+        warnMissing("Material", missing);
+        missing.clear();
+
         for (PotionEffectType value : PotionEffectType.values()) {
             if (Prism.getInstance().getServerMajorVersion() >= 19) {
                 JsonElement element = object.get("effect.minecraft." + value.getKey().getKey());
                 if (element == null) {
-                    Prism.warn("缺少本地化语言: PotionEffectType = " + value.getKey().getKey());
+                    missing.add(value.getKey().getKey());
                     effectLocalize.put(value, value.getKey().getKey().toLowerCase().replace("_", " "));
                 } else {
                     effectLocalize.put(value, element.getAsString());
@@ -164,24 +170,46 @@ public class CNLocalization {
             } else {
                 String locale = yaml.getString("Effect." + value.getName());
                 if (locale == null) {
-                    Prism.warn("缺少本地化语言: PotionEffectType = " + value.getName());
+                    missing.add(value.getName());
                     effectLocalize.put(value, value.getName().toLowerCase().replace("_", " "));
                 } else {
                     effectLocalize.put(value, locale);
                 }
             }
         }
+        warnMissing("PotionEffectType", missing);
+        missing.clear();
+
         for (Enchantment value : Enchantment.values()) {
             JsonElement element = object.get("enchantment.minecraft." + value.getKey().getKey());
             if (element == null) {
-                Prism.warn("缺少本地化语言: Enchantment = " + value.getKey().getKey());
+                missing.add(value.getKey().getKey());
                 enchantmentLocalize.put(value, value.getKey().getKey().toLowerCase().replace("_", " "));
             } else {
                 enchantmentLocalize.put(value, element.getAsString());
             }
         }
+        warnMissing("Enchantment", missing);
+    }
 
-
+    private static void warnMissing(String type, List<String> list) {
+        if (list.size() == 0) {
+            return;
+        }
+        StringBuilder sb = new StringBuilder("缺少本地化语言: ").append(type).append(" = ");
+        if (list.size() >= 20) {
+            for (int i = 0; i < 20; i++) {
+                sb.append(list.get(i)).append(", ");
+            }
+            sb.delete(sb.length() - 2, sb.length())
+                    .append("... 等");
+        } else {
+            for (String ty: list) {
+                sb.append(ty).append(", ");
+            }
+        }
+        sb.append("共 ").append(list.size()).append(" 个项目");
+        Prism.warn(sb.toString());
     }
 
     public static String getMaterialLocale(Material material) {
