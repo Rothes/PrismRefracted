@@ -8,7 +8,6 @@ import network.darkhelmet.prism.actions.BlockAction;
 import network.darkhelmet.prism.actions.GenericAction;
 import network.darkhelmet.prism.actions.HangingItemAction;
 import network.darkhelmet.prism.actions.ItemStackAction;
-import network.darkhelmet.prism.actions.PortalCreateAction;
 import network.darkhelmet.prism.actions.SignAction;
 import network.darkhelmet.prism.api.BlockStateChange;
 import network.darkhelmet.prism.api.ChangeResult;
@@ -191,7 +190,7 @@ public class Preview implements Previewable {
         blockChangesRead = 0;
         totalChangesCount = worldChangeQueue.size();
 
-        boolean ignore = parameters.hasFlag(Flag.IGNORE_STATE);
+        boolean match = parameters.hasFlag(Flag.MATCHES_STATE);
 
         NumberFormat nf = NumberFormat.getNumberInstance();
         nf.setMaximumFractionDigits(2);
@@ -249,7 +248,7 @@ public class Preview implements Previewable {
                         if (a instanceof GenericAction) {
                             GenericAction action = (GenericAction) a;
                             if (processType.equals(PrismProcessType.ROLLBACK)) {
-                                if (!ignore && action.isRollbacked()) {
+                                if (match && action.isRollbacked()) {
                                     // We don't need to check the action because it can be rolled-back.
                                     stateSkippedCount++;
                                     skippedBlockCount++;
@@ -257,13 +256,13 @@ public class Preview implements Previewable {
                                     continue;
                                 }
                                 result = action.applyRollback(player, parameters, isPreview);
-                                if (result.getType() == ChangeResultType.APPLIED) {
+                                if (!isPreview && result.getType() == ChangeResultType.APPLIED) {
                                     action.setRollbacked(true);
                                     updateRollbackedList.add(action);
                                 }
                             }
                             if (processType.equals(PrismProcessType.RESTORE)) {
-                                if (!ignore && !action.isRollbacked()) {
+                                if (match && !action.isRollbacked()) {
                                     if (action instanceof BlockAction || action instanceof HangingItemAction
                                             || action instanceof ItemStackAction || action instanceof SignAction) {
                                         stateSkippedCount++;
@@ -273,7 +272,7 @@ public class Preview implements Previewable {
                                     continue;
                                 }
                                 result = action.applyRestore(player, parameters, isPreview);
-                                if (result.getType() == ChangeResultType.APPLIED) {
+                                if (!isPreview && result.getType() == ChangeResultType.APPLIED) {
                                     action.setRollbacked(false);
                                     updateRollbackedList.add(action);
                                 }
