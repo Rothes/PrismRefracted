@@ -49,12 +49,7 @@ public class QueueDrain {
 
             if (Prism.getPrismDataSource().isPaused()) {
                 Prism.getPrismDataSource().setPaused(false);
-                Prism.log("Force unpaused the recorder for drain.");
-            }
-
-            if (Prism.getPrismDataSource().isPaused()) {
-                Prism.getPrismDataSource().setPaused(false);
-                Prism.log("Force unpaused the recorder for drain.");
+                Prism.log("由于需要执行队列清空, 已强制取消暂停记录器.");
             }
 
             // run insert
