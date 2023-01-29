@@ -34,7 +34,9 @@ public class QueueDrain {
         final RecordingTask recorderTask = new RecordingTask(plugin);
 
         // Faster drain
-        RecordingTask.setActionsPerInsert(15000);
+        RecordingTask.setActionsPerInsert(30000);
+        Prism.getInstance().getConfig().set("prism.query.actions-per-insert-batch", 30000);
+        Prism.getInstance().getConfig().set("prism.query.max-failures-before-wait", 10);
         Prism.getInstance().getConfig().set("prism.query.max-failures-before-wait", 10);
         Prism.getInstance().getConfig().set("prism.query.queue-empty-tick-delay", 0);
 
