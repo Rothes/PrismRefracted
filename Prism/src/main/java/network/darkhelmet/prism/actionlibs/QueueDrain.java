@@ -31,9 +31,6 @@ public class QueueDrain {
         draining = true;
         RecordingManager.failedDbConnectionCount = 0;
 
-        draining = true;
-        RecordingManager.failedDbConnectionCount = 0;
-
         final RecordingTask recorderTask = new RecordingTask(plugin);
 
         // Faster drain
@@ -65,6 +62,7 @@ public class QueueDrain {
             if (RecordingManager.failedDbConnectionCount > 0) {
                 Prism.log("停止队列清空, 由于检测到数据库错误. 失去的队列条目: "
                         + RecordingQueue.getQueue().size());
+                break;
             }
         }
     }
