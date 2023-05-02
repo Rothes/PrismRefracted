@@ -11,7 +11,8 @@ import network.darkhelmet.prism.commandlibs.PreprocessArgs;
 import network.darkhelmet.prism.purge.PurgeTask;
 import network.darkhelmet.prism.purge.SenderPurgeCallback;
 import net.kyori.adventure.text.Component;
-import org.bukkit.scheduler.BukkitTask;
+import network.darkhelmet.prism.utils.folia.PrismScheduler;
+import network.darkhelmet.prism.utils.folia.PrismTask;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -20,7 +21,7 @@ import java.util.regex.Pattern;
 public class DeleteCommand extends AbstractCommand {
 
     private final Prism plugin;
-    private BukkitTask deleteTask;
+    private PrismTask deleteTask;
 
     /**
      * Constructor.
@@ -82,7 +83,7 @@ public class DeleteCommand extends AbstractCommand {
                                             .content(defaultsReminder.toString()))));
             Prism.messenger.sendMessage(call.getSender(), Prism.messenger
                     .playerHeaderMsg(Il8nHelper.getMessage("start-purge")));
-            plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
+            PrismScheduler.runTaskAsynchronously(() -> {
                 int purgeTickDelay = plugin.getConfig().getInt("prism.purge.batch-tick-delay");
                 if (purgeTickDelay < 0) {
                     purgeTickDelay = 20;
@@ -102,7 +103,7 @@ public class DeleteCommand extends AbstractCommand {
                 final long maxId = extents[1];
                 Prism.log(
                         "正在进行 Prism 周期数据库数据清理. 清理将分批进行, 因此我们不会占用数据库...");
-                deleteTask = plugin.getServer().getScheduler().runTaskAsynchronously(plugin,
+                deleteTask = PrismScheduler.runTaskAsynchronously(
                         new PurgeTask(plugin, paramList, purgeTickDelay, minId, maxId, callback));
             });
         } else {

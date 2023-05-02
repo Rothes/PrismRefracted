@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import net.kyori.adventure.text.Component;
 import network.darkhelmet.prism.Prism;
+import network.darkhelmet.prism.utils.folia.PrismScheduler;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -34,7 +35,7 @@ public class Updater implements Listener {
     public void start() {
         new Metrics(Prism.getInstance(), 15030);
         Bukkit.getPluginManager().registerEvents(this, Prism.getInstance());
-        Bukkit.getScheduler().runTaskTimerAsynchronously(Prism.getInstance(), () -> {
+        PrismScheduler.runTaskTimerAsynchronously(() -> {
             try {
                 checkJson(getJson());
             } catch (IllegalStateException | NullPointerException ignored) {
@@ -45,7 +46,7 @@ public class Updater implements Listener {
 
     @EventHandler
     public void playerJoin(PlayerJoinEvent e) {
-        Bukkit.getScheduler().runTaskAsynchronously(Prism.getInstance(), () -> {
+        PrismScheduler.runTaskAsynchronously(() -> {
             if (e.getPlayer().hasPermission("prism.cnupdater.notify") || e.getPlayer().isOp()) {
                 for (String message : messages) {
                     Prism.messenger.sendMessage(e.getPlayer(), Prism.messenger.playerHeaderMsg(Component.text(message)));

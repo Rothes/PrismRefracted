@@ -5,7 +5,7 @@ import network.darkhelmet.prism.Prism;
 import network.darkhelmet.prism.actionlibs.ActionFactory;
 import network.darkhelmet.prism.actionlibs.RecordingQueue;
 import network.darkhelmet.prism.utils.block.Utilities;
-import org.bukkit.Bukkit;
+import network.darkhelmet.prism.utils.folia.PrismScheduler;
 import org.bukkit.Material;
 import org.bukkit.TreeType;
 import org.bukkit.block.Block;
@@ -114,9 +114,8 @@ public class PrismWorldEvents implements Listener {
                         // Run the second after the fire was placed (20 ticks), so that it is recorded after the fire.
                         // We have to do this because the database only records changes per second, not tick or instant,
                         // which can result in the fire being recorded after the nether portal blocks.
-                        Bukkit.getScheduler().runTaskLater(Prism.getInstance(), () -> {
-                            recordCreatePortal(event, type, newBlock, e, oldBlock);
-                        }, 20);
+                        PrismScheduler.runTaskLater(() -> recordCreatePortal(event, type, newBlock, e, oldBlock),
+                                newBlock.getLocation(), 20);
                     }
                 }
             }
@@ -130,9 +129,8 @@ public class PrismWorldEvents implements Listener {
                         // Run the second after the fire was placed (20 ticks), so that it is recorded after the fire.
                         // We have to do this because the database only records changes per second, not tick or instant,
                         // which can result in the fire being recorded after the nether portal blocks.
-                        Bukkit.getScheduler().runTaskLater(Prism.getInstance(), () -> {
-                            recordCreatePortal(event, type, newBlock, e, oldBlock);
-                        }, 20);
+                        PrismScheduler.runTaskLater(() -> recordCreatePortal(event, type, newBlock, e, oldBlock),
+                                newBlock.getLocation(), 20);
                     } else {
                         recordCreatePortal(event, type, newBlock, e, oldBlock);
                     }

@@ -5,6 +5,7 @@ import network.darkhelmet.prism.api.objects.MaterialState;
 import network.darkhelmet.prism.database.IdMapQuery;
 import network.darkhelmet.prism.database.sql.SqlIdMapQuery;
 import network.darkhelmet.prism.utils.block.Utilities;
+import network.darkhelmet.prism.utils.folia.PrismScheduler;
 import io.github.rothes.prismcn.CNLocalization;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -82,7 +83,7 @@ public class MaterialAliases {
      * @param materials Materials ...
      */
     public void initMaterials(Material... materials) {
-        Bukkit.getScheduler().runTaskAsynchronously(Prism.getInstance(), () -> {
+        PrismScheduler.runTaskAsynchronously(() -> {
             SqlIdMapQuery query = new SqlIdMapQuery(Prism.getPrismDataSource());
             for (Material m : materials) {
                 String matName = m.name().toLowerCase(Locale.ENGLISH);

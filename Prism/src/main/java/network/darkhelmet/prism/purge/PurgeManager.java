@@ -4,8 +4,8 @@ import network.darkhelmet.prism.Prism;
 import network.darkhelmet.prism.actionlibs.QueryParameters;
 import network.darkhelmet.prism.api.actions.PrismProcessType;
 import network.darkhelmet.prism.commandlibs.PreprocessArgs;
-import org.bukkit.Bukkit;
-import org.bukkit.scheduler.BukkitTask;
+import network.darkhelmet.prism.utils.folia.PrismScheduler;
+import network.darkhelmet.prism.utils.folia.PrismTask;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -14,7 +14,7 @@ public final class PurgeManager implements Runnable {
 
     private final List<String> purgeRules;
     private final Prism plugin;
-    public BukkitTask deleteTask;
+    public PrismTask deleteTask;
 
     /**
      * Create a purge manager.
@@ -73,7 +73,7 @@ public final class PurgeManager implements Runnable {
                 Prism.log(
                         "正在开始 Prism 数据库周期数据清理. "
                                 + "清理将分批进行, 因此我们不会占用数据库...");
-                deleteTask = Bukkit.getServer().getScheduler().runTaskLaterAsynchronously(plugin,
+                deleteTask = PrismScheduler.runTaskLaterAsynchronously(
                         new PurgeTask(plugin, paramList, purgeTickDelay, new LogPurgeCallback()),
                         purgeTickDelay);
 
