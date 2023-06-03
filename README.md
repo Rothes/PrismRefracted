@@ -3,6 +3,9 @@
 **Prism (Refracted)** 是一个可以追踪 Minecraft 世界变化的 Bukkit 插件. 这些变化可以被查询, 回滚, 还原, 或被执行其它操作.
 因为追踪的效果太好, NSA 偷走了我们的名字.
 
+### 中文版的变更
+中文版含英文版代码的全部内容，除此之外含汉化作者新增或更改过的代码内容，用于改善或增强用户体验。我们向上游提交了代码请求，他们随时可以合并这些代码。这意味着中文版可以抢先体验所有的新功能。中文版还包含深度的内核汉化。
+
 中文版下载
 - [Mcbbs 资源站][mcbbsv4]
 
@@ -38,7 +41,7 @@ Prism 根据 Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported 
 ### 鸣谢
 
 - 最初的作者, 以及重制作者, 为了 `play.darkhelmet.network` 服务器.
-- 最近 [addstarmc][addstarmc] 团队的管理.
+- 近期 [addstarmc][addstarmc] 团队的管理.
 - LegendarySoldier 的美术.
 
 
