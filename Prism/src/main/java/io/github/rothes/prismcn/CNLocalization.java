@@ -16,19 +16,21 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 
 public class CNLocalization {
 
-    private static final HashMap<EntityType, String> entityLocalize = new HashMap<>();
-    private static final HashMap<Material, String> materialLocalize = new HashMap<>();
-    private static final HashMap<PotionEffectType, String> effectLocalize = new HashMap<>();
-    private static final HashMap<Enchantment, String> enchantmentLocalize = new HashMap<>();
+    private static final Map<EntityType, String> entityLocalize = new EnumMap<>(EntityType.class);
+    private static final Map<Material, String> materialLocalize = new EnumMap<>(Material.class);
+    private static final Map<PotionEffectType, String> effectLocalize = new HashMap<>();
+    private static final Map<Enchantment, String> enchantmentLocalize = new HashMap<>();
 
-    private static final HashMap<String, String> entityLocalizeRestore = new HashMap<>();
-    private static final HashMap<String, String> materialLocalizeRestore = new HashMap<>();
+    private static final Map<String, String> entityLocalizeRestore = new HashMap<>();
+    private static final Map<String, String> materialLocalizeRestore = new HashMap<>();
 
     public static void initialize(Prism plugin) {
         YamlConfiguration yaml = new YamlConfiguration();
