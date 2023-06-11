@@ -9,6 +9,7 @@ import network.darkhelmet.prism.actions.BlockShiftAction;
 import network.darkhelmet.prism.actions.BonemealUseAction;
 import network.darkhelmet.prism.actions.EntityAction;
 import network.darkhelmet.prism.actions.EntityTravelAction;
+import network.darkhelmet.prism.actions.FlowerPotChangeAction;
 import network.darkhelmet.prism.actions.GrowAction;
 import network.darkhelmet.prism.actions.HangingItemAction;
 import network.darkhelmet.prism.actions.ItemStackAction;
@@ -174,6 +175,8 @@ public class ActionRegistry {
                 BlockAction.class, Il8nHelper.getRawMessage("accessed")));
         registerAction(new ActionTypeImpl("craft-item", false, false, false,
                 ItemStackAction.class, Il8nHelper.getRawMessage("crafted")));
+        registerAction(new ActionTypeImpl("upgrade-gear", false, false, false,
+                ItemStackAction.class, Il8nHelper.getRawMessage("upgraded")));
         registerAction(new ActionTypeImpl("creeper-explode", false, true, true,
                 BlockAction.class, Il8nHelper.getRawMessage("blew-up")));
         registerAction(new ActionTypeImpl("crop-trample", false, true, true,
@@ -212,6 +215,8 @@ public class ActionRegistry {
                 BlockChangeAction.class, Il8nHelper.getRawMessage("spread")));
         registerAction(new ActionTypeImpl("firework-launch", false, false, false,
                 ItemStackAction.class, Il8nHelper.getRawMessage("launched")));
+        registerAction(new ActionTypeImpl("flowerpot-change", false, true, true,
+                FlowerPotChangeAction.class, Il8nHelper.getRawMessage("flowerpot-changed")));
         registerAction(new ActionTypeImpl("hangingitem-break", false, true, true,
                 HangingItemAction.class, Il8nHelper.getRawMessage("broke")));
         registerAction(new ActionTypeImpl("hangingitem-place", true, true, true,
@@ -276,7 +281,7 @@ public class ActionRegistry {
                 PrismRollbackAction.class, Il8nHelper.getRawMessage("rolled-back")));
         registerAction(new ActionTypeImpl("sheep-eat", false, false, false,
                 BlockAction.class, Il8nHelper.getRawMessage("ate")));
-        registerAction(new ActionTypeImpl("sign-change", false, false, true,
+        registerAction(new ActionTypeImpl("sign-change", false, true, true,
                 SignAction.class, Il8nHelper.getRawMessage("wrote")));
         registerAction(new ActionTypeImpl("spawnegg-use", false, false, false,
                 UseAction.class, Il8nHelper.getRawMessage("used")));

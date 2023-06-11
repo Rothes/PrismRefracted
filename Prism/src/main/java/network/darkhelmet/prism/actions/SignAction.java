@@ -1,5 +1,7 @@
 package network.darkhelmet.prism.actions;
 
+import io.github.rothes.prismcn.CNLocalization;
+import network.darkhelmet.prism.Prism;
 import network.darkhelmet.prism.api.ChangeResult;
 import network.darkhelmet.prism.api.ChangeResultType;
 import network.darkhelmet.prism.api.PrismParameters;
@@ -9,12 +11,17 @@ import org.bukkit.Material;
 import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.Sign;
 import org.bukkit.block.data.Directional;
+import org.bukkit.block.sign.Side;
+import org.bukkit.block.sign.SignSide;
 import org.bukkit.entity.Player;
 
 import java.util.Objects;
 
 public class SignAction extends GenericAction {
+
+    private static final boolean POST_20 = Prism.getInstance().getServerMajorVersion() >= 20;
 
     protected SignChangeActionData actionData;
 
@@ -24,7 +31,7 @@ public class SignAction extends GenericAction {
      * @param block Block
      * @param lines String[]
      */
-    public void setBlock(Block block, String[] lines) {
+    public void setBlock(Block block, String[] lines, boolean isFront) {
 
         // Build an object for the specific details of this action
         actionData = new SignChangeActionData();
@@ -41,6 +48,14 @@ public class SignAction extends GenericAction {
         }
         if (lines != null) {
             actionData.lines = lines;
+        }
+
+        actionData.frontSide = isFront;
+        Sign blockState = (Sign) block.getState();
+        if (POST_20) {
+            actionData.oldLines = blockState.getSide(isFront ? Side.FRONT : Side.BACK).getLines();
+        } else {
+            actionData.oldLines = blockState.getLines();
         }
     }
 
@@ -103,14 +118,25 @@ public class SignAction extends GenericAction {
      */
     @Override
     public String getNiceName() {
-        String name = "告示牌 (";
-        if (actionData.lines != null && actionData.lines.length > 0) {
-            name += TypeUtils.join(actionData.lines, ", ");
-        } else {
-            name += "无文本";
+        String name = CNLocalization.getMaterialLocale(getMaterial()) + " (";
+        if (actionData.lines != null) {
+            String join = TypeUtils.join(actionData.lines, ", ");
+            if (join.isEmpty()) {
+                name += "无文本";
+            } else {
+                name += join;
+            }
         }
-        name += ")";
+        name += ") 在 " + (actionData.frontSide ? "正面" : "反面");
         return name;
+    }
+
+    @Override
+    public ChangeResult applyRollback(Player player, PrismParameters parameters, boolean isPreview) {
+        if (actionData.oldLines == null) {
+            return new ChangeResultImpl(ChangeResultType.SKIPPED, null);
+        }
+        return setSignLines(actionData.oldLines);
     }
 
     /**
@@ -118,11 +144,16 @@ public class SignAction extends GenericAction {
      */
     @Override
     public ChangeResult applyRestore(Player player, PrismParameters parameters, boolean isPreview) {
+        return setSignLines(getLines());
+    }
+
+    private ChangeResult setSignLines(String[] lines) {
 
         final Block block = getWorld().getBlockAt(getLoc());
 
         // Ensure a sign exists there (and no other block)
-        if (block.getType().equals(Material.AIR) || Tag.SIGNS.isTagged(block.getType())) {
+        if (block.getType().equals(Material.AIR) || Tag.SIGNS.isTagged(block.getType())
+                || (Prism.getInstance().getServerMajorVersion() >= 20 && Tag.ALL_SIGNS.isTagged(block.getType()))) {
 
             if (block.getType().equals(Material.AIR)) {
                 block.setType(getSignType());
@@ -134,16 +165,22 @@ public class SignAction extends GenericAction {
             }
 
             // Set the content
-            if (block.getState() instanceof org.bukkit.block.Sign) {
+            if (block.getState() instanceof Sign) {
 
                 // Set sign data
-                final String[] lines = getLines();
-                final org.bukkit.block.Sign sign = (org.bukkit.block.Sign) block.getState();
-                int i = 0;
-                if (lines != null && lines.length > 0) {
-                    for (final String line : lines) {
-                        sign.setLine(i, line);
-                        i++;
+                final Sign sign = (Sign) block.getState();
+                if (POST_20) {
+                    SignSide side = sign.getSide(actionData.frontSide ? Side.FRONT : Side.BACK);
+                    if (lines != null) {
+                        for (int i = 0; i < 4; i++) {
+                            side.setLine(i, lines[i]);
+                        }
+                    }
+                } else {
+                    if (lines != null) {
+                        for (int i = 0; i < 4; i++) {
+                            sign.setLine(i, lines[i]);
+                        }
                     }
                 }
                 sign.update(true, false);
@@ -154,6 +191,8 @@ public class SignAction extends GenericAction {
     }
 
     public static class SignChangeActionData {
+        public boolean frontSide = true;
+        public String[] oldLines;
         public String[] lines;
         public String signType;
         public BlockFace facing;

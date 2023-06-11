@@ -16,6 +16,7 @@ import org.bukkit.block.Jukebox;
 import org.bukkit.block.Sign;
 import org.bukkit.block.data.type.Chest;
 import org.bukkit.block.data.type.Chest.Type;
+import org.bukkit.block.sign.Side;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -387,8 +388,12 @@ public class PrismBlockEvents implements Listener {
             return;
         }
         if (event.getBlock().getState() instanceof Sign) {
+            boolean front = true;
+            if (Prism.getInstance().getServerMajorVersion() >= 20) {
+                front = event.getSide() == Side.FRONT;
+            }
             RecordingQueue.addToQueue(
-                    ActionFactory.createSign("sign-change", event.getBlock(), event.getLines(), event.getPlayer()));
+                    ActionFactory.createSign("sign-change", event.getBlock(), event.getLines(), front, event.getPlayer()));
         }
     }
 
