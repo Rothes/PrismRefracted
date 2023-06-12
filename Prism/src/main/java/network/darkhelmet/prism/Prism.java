@@ -397,7 +397,6 @@ public class Prism extends JavaPlugin implements PrismApi {
         pluginVersion = this.getDescription().getVersion();
         audiences = BukkitAudiences.create(this);
         messenger = new Messenger(pluginName, Prism.getAudiences());
-        CNLocalization.initialize(instance);
         log("正在初始化 Prism " + pluginVersion + ". 作者 Viveleroi; 汉化 Rothes");
         log("");
         log("§a=============================================================");
@@ -407,6 +406,7 @@ public class Prism extends JavaPlugin implements PrismApi {
         log("§a=============================================================");
         log("");
         serverMajorVersion = Byte.parseByte(Bukkit.getServer().getBukkitVersion().split("\\.")[1].split("-")[0]);
+        CNLocalization.initialize(instance);
         loadConfig();        // Load configuration, or install if new
         isSpigot = PaperLib.isSpigot();
         isPaper = PaperLib.isPaper();

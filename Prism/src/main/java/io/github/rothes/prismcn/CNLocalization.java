@@ -6,6 +6,7 @@ import com.google.gson.JsonParser;
 import network.darkhelmet.prism.Prism;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
+import org.bukkit.Tag;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
@@ -149,9 +150,29 @@ public class CNLocalization {
                         element = object.get("block.minecraft." + value.getKey().getKey());
                     }
                     if (element == null) {
-                        missing.add(value.name());
-                        materialLocalize.put(value, value.name().toLowerCase().replace("_", " "));
-                        materialLocalizeRestore.put(value.name().toLowerCase().replace("_", " "), value.name());
+                        boolean added = false;
+                        if (Prism.getInstance().getServerMajorVersion() >= 20) {
+                            if (value == Material.NETHERITE_UPGRADE_SMITHING_TEMPLATE) {
+                                materialLocalize.put(value, "锻造模版(下界合金升级)");
+                                materialLocalizeRestore.put("锻造模版(下界合金升级)", value.name());
+                                added = true;
+                            } else if (Tag.ITEMS_TRIM_TEMPLATES.isTagged(value)) {
+                                String name = "锻造模版(";
+                                String key = "trim_pattern.minecraft." + value.name().split("_", 2)[0].toLowerCase();
+                                JsonElement jsonElement = object.get(key);
+                                if (jsonElement != null) {
+                                    name += jsonElement.getAsString() + ")";
+                                    materialLocalize.put(value, name);
+                                    materialLocalizeRestore.put(name, value.name());
+                                    added = true;
+                                }
+                            }
+                        }
+                        if (!added) {
+                            missing.add(value.name());
+                            materialLocalize.put(value, value.name().toLowerCase().replace("_", " "));
+                            materialLocalizeRestore.put(value.name().toLowerCase().replace("_", " "), value.name());
+                        }
                     } else {
                         materialLocalize.put(value, element.getAsString());
                         materialLocalizeRestore.put(element.getAsString(), value.name());
