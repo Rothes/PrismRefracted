@@ -36,6 +36,7 @@ import org.bukkit.block.data.Waterlogged;
 import org.bukkit.block.data.type.Bed;
 import org.bukkit.block.data.type.Bed.Part;
 import org.bukkit.block.data.type.RespawnAnchor;
+import org.bukkit.block.sign.Side;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -64,6 +65,8 @@ import static org.bukkit.Material.WATER;
 
 
 public class BlockAction extends GenericAction {
+
+    private static final boolean POST_20 = Prism.getInstance().getServerMajorVersion() >= 20;
 
     private BlockActionData actionData;
 
@@ -133,10 +136,13 @@ public class BlockAction extends GenericAction {
                 actionData = respawnAnchorActionData;
                 break;
             default:
-                if (Tag.SIGNS.isTagged(state.getType())) {
+                if (Tag.SIGNS.isTagged(state.getType()) || (POST_20 && Tag.ALL_SIGNS.isTagged(state.getType()))) {
                     final SignActionData signActionData = new SignActionData();
                     final Sign sign = (Sign) state;
                     signActionData.lines = sign.getLines();
+                    if (POST_20) {
+                        signActionData.backLines = sign.getSide(Side.BACK).getLines();
+                    }
                     actionData = signActionData;
                 }
                 if (Tag.BANNERS.isTagged(state.getType())) {
@@ -189,7 +195,7 @@ public class BlockAction extends GenericAction {
                 actionData = gson().fromJson(data, SkullActionData.class);
             } else if (getMaterial() == SPAWNER) {
                 actionData = gson().fromJson(data, SpawnerActionData.class);
-            } else if (Tag.SIGNS.isTagged(getMaterial())) {
+            } else if (Tag.SIGNS.isTagged(getMaterial()) || (POST_20 && Tag.ALL_SIGNS.isTagged(getMaterial()))) {
                 actionData = gson().fromJson(data, SignActionData.class);
             } else if (getMaterial() == COMMAND_BLOCK) {
                 actionData = gson().fromJson(data, CommandActionData.class);
@@ -226,7 +232,22 @@ public class BlockAction extends GenericAction {
         if (blockActionData instanceof SignActionData) {
             final SignActionData ad = (SignActionData) blockActionData;
             if (ad.lines != null && ad.lines.length > 0) {
-                name += " (" + TypeUtils.join(ad.lines, ", ") + ")";
+                name += " (";
+                boolean joined = false;
+                String join = TypeUtils.join(ad.lines, ", ");
+                if (!join.isEmpty()) {
+                    name += join + ", ";
+                    joined = true;
+                }
+                if (ad.backLines != null) {
+                    join = TypeUtils.join(ad.backLines, ", ");
+                    name += join;
+                    joined = joined || !join.isEmpty();
+                }
+                if (!joined) {
+                    name += "无文本";
+                }
+                name += ")";
             }
         } else if (blockActionData instanceof CommandActionData) {
             final CommandActionData ad = (CommandActionData) blockActionData;
@@ -436,6 +457,11 @@ public class BlockAction extends GenericAction {
                     if (s.lines != null) {
                         for (int i = 0; i < s.lines.length; ++i) {
                             ((Sign) newState).setLine(i, s.lines[i]);
+                        }
+                    }
+                    if (POST_20 && s.backLines != null) {
+                        for (int i = 0; i < s.backLines.length; ++i) {
+                            ((Sign) newState).getSide(Side.BACK).setLine(i, s.backLines[i]);
                         }
                     }
                 }
@@ -658,6 +684,7 @@ public class BlockAction extends GenericAction {
      */
     public static class SignActionData extends BlockActionData {
         String[] lines;
+        String[] backLines;
     }
 
     public static class BannerActionData extends RotatableActionData {

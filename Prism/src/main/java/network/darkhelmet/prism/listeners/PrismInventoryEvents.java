@@ -4,6 +4,7 @@ import network.darkhelmet.prism.Prism;
 import network.darkhelmet.prism.actionlibs.ActionFactory;
 import network.darkhelmet.prism.actionlibs.RecordingQueue;
 import network.darkhelmet.prism.api.actions.Handler;
+import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Tag;
@@ -11,7 +12,12 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.ChiseledBookshelf;
 import org.bukkit.block.Lectern;
+import org.bukkit.block.Sign;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Directional;
+import org.bukkit.block.data.Rotatable;
+import org.bukkit.block.sign.Side;
+import org.bukkit.craftbukkit.v1_20_R1.block.impl.CraftFloorSign;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -34,8 +40,11 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.SmithingInventory;
+import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
+import org.bukkit.util.VoxelShape;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -194,6 +203,92 @@ public class PrismInventoryEvents implements Listener {
                 changeTo = Material.FLOWER_POT;
             }
             RecordingQueue.addToQueue(ActionFactory.createFlowerPotChange(clickedBlock, changeTo, player));
+        } else if (Tag.SIGNS.isTagged(clickedBlock.getType())
+                || Prism.getInstance().getServerMajorVersion() >= 20 && Tag.ALL_SIGNS.isTagged(clickedBlock.getType())) {
+            Sign sign = (Sign) clickedBlock.getState();
+            if (player.isSneaking()) {
+                return;
+            }
+
+            // Only main hand. Offhand doesn't work here.
+            ItemStack hand = player.getInventory().getItemInMainHand();
+            String handMat = hand.getType().name();
+            // Get the player clicked side
+            boolean front = true;
+            if (Prism.getInstance().getServerMajorVersion() >= 20) {
+                BlockData blockData = clickedBlock.getBlockData();
+                BlockFace facing;
+                if (blockData instanceof Directional) {
+                    facing = ((Directional) blockData).getFacing();
+                } else {
+                    facing = ((Rotatable) blockData).getRotation();
+                }
+                Vector signCenter = clickedBlock.getLocation().toVector();
+                if (Tag.WALL_SIGNS.isTagged(sign.getType())) {
+                    switch (facing) {
+                        case EAST:
+                            signCenter.setX(signCenter.getX() + 0.0625);
+                            break;
+                        case SOUTH:
+                            signCenter.setZ(signCenter.getZ() + 0.0625);
+                            break;
+                        case WEST:
+                            signCenter.setX(signCenter.getX() + 1 - 0.0625);
+                            break;
+                        case NORTH:
+                            signCenter.setZ(signCenter.getZ() + 1 - 0.0625);
+                            break;
+                        default:
+                            throw new AssertionError();
+                    }
+                } else {
+                    signCenter.setX(signCenter.getX() + 0.5);
+                    signCenter.setY(signCenter.getY() + 0.5);
+                    signCenter.setZ(signCenter.getZ() + 0.5);
+                }
+
+                Vector playerDirection = new Vector(player.getLocation().getX() - signCenter.getX(), 0, player.getLocation().getZ() - signCenter.getZ());
+                float angle = facing.getDirection().angle(playerDirection);
+                front = angle <= 1.5707963267948966;
+            }
+            // Get side end
+            if (handMat.endsWith("_DYE")) {
+                if (!Prism.getIgnore().event("sign-dye", event.getPlayer())) {
+                    return;
+                }
+                DyeColor dyeColor;
+                try {
+                    dyeColor = DyeColor.valueOf(handMat.substring(0, handMat.length() - 4));
+                } catch (IllegalArgumentException ignored) {
+                    // The player is not holding a dye...
+                    return;
+                }
+                DyeColor signColor;
+                if (Prism.getInstance().getServerMajorVersion() >= 20) {
+                    signColor = sign.getSide(front ? Side.FRONT : Side.BACK).getColor();
+                } else {
+                    signColor = sign.getColor();
+                }
+                if (dyeColor != signColor) {
+                    RecordingQueue.addToQueue(
+                            ActionFactory.createSignDye(clickedBlock, dyeColor, front, event.getPlayer()));
+                }
+            } else if (Prism.getInstance().getServerMajorVersion() >= 17 && handMat.endsWith("INK_SAC")) {
+                if (!Prism.getIgnore().event("sign-glow", event.getPlayer())) {
+                    return;
+                }
+                boolean makeGlow = hand.getType() == Material.GLOW_INK_SAC;
+                boolean signGlow;
+                if (Prism.getInstance().getServerMajorVersion() >= 20) {
+                    signGlow = sign.getSide(front ? Side.FRONT : Side.BACK).isGlowingText();
+                } else {
+                    signGlow = sign.isGlowingText();
+                }
+                if (makeGlow != signGlow) {
+                    RecordingQueue.addToQueue(
+                            ActionFactory.createSignGlow(clickedBlock, makeGlow, front, event.getPlayer()));
+                }
+            }
         }
     }
 

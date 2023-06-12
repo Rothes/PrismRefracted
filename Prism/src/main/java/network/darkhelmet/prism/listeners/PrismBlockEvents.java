@@ -393,7 +393,7 @@ public class PrismBlockEvents implements Listener {
                 front = event.getSide() == Side.FRONT;
             }
             RecordingQueue.addToQueue(
-                    ActionFactory.createSign("sign-change", event.getBlock(), event.getLines(), front, event.getPlayer()));
+                    ActionFactory.createSignChange("sign-change", event.getBlock(), event.getLines(), front, event.getPlayer()));
         }
     }
 

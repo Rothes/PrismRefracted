@@ -185,6 +185,8 @@ public class PrismConfig extends ConfigBase {
         config.addDefault("prism.tracking.potion-lingering", true);
         config.addDefault("prism.tracking.sheep-eat", true);
         config.addDefault("prism.tracking.sign-change", true);
+        config.addDefault("prism.tracking.sign-dye", true);
+        config.addDefault("prism.tracking.sign-glow", true);
         config.addDefault("prism.tracking.spawnegg-use", true);
         config.addDefault("prism.tracking.target-hit", false);
         config.addDefault("prism.tracking.tnt-explode", true);

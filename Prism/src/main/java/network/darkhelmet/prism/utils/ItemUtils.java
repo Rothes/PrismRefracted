@@ -454,7 +454,12 @@ public class ItemUtils {
             }
         } else if (meta instanceof BookMeta) {
             BookMeta book = (BookMeta) meta;
-            itemName.append(" '").append(book.getTitle()).append("' 作者 ").append(book.getAuthor());
+            if (book.hasTitle()) {
+                itemName.append(" '").append(book.getTitle()).append('\'');
+            }
+            if (book.hasAuthor()) {
+                itemName.append(" 作者 ").append(book.getAuthor());
+            }
         }
 
         if (meta instanceof EnchantmentStorageMeta) {
