@@ -1,5 +1,6 @@
 package network.darkhelmet.prism.actions;
 
+import io.github.rothes.prismcn.CNLocalization;
 import network.darkhelmet.prism.Prism;
 import network.darkhelmet.prism.api.ChangeResult;
 import network.darkhelmet.prism.api.ChangeResultType;
@@ -107,9 +108,9 @@ public class SignGlowAction extends GenericAction {
 
     @Override
     public String getNiceName() {
-        return getMaterial().name().toLowerCase().replace('_', ' ')
-                + (actionData.makeGlow ? "" : " (cancelled)")
-                + " at " + (actionData.frontSide ? "front" : "back");
+        return CNLocalization.getMaterialLocale(getMaterial())
+                + (actionData.makeGlow ? "" : " (取消高亮)")
+                + " 在 " + (actionData.frontSide ? "正面" : "反面");
     }
 
     public class SignGlowActionData {

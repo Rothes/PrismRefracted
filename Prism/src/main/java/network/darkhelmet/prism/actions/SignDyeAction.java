@@ -1,5 +1,6 @@
 package network.darkhelmet.prism.actions;
 
+import io.github.rothes.prismcn.CNLocalization;
 import network.darkhelmet.prism.Prism;
 import network.darkhelmet.prism.api.ChangeResult;
 import network.darkhelmet.prism.api.ChangeResultType;
@@ -114,10 +115,10 @@ public class SignDyeAction extends GenericAction {
 
     @Override
     public String getNiceName() {
-        return getMaterial().name().toLowerCase().replace('_', ' ')
-                + " from " + actionData.oldColor.name().toLowerCase().replace('_', ' ')
-                + " to "  + actionData.newColor.name().toLowerCase().replace('_', ' ')
-                + " at " + (actionData.frontSide ? "front" : "back");
+        return CNLocalization.getMaterialLocale(getMaterial())
+                + " 从 " + CNLocalization.getDyeColorLocale(actionData.oldColor)
+                + " 变为 "  + CNLocalization.getDyeColorLocale(actionData.newColor)
+                + " 在 " + (actionData.frontSide ? "正面" : "反面");
     }
 
     public class SignDyeActionData {

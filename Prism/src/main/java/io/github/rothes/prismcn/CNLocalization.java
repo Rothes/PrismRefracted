@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import network.darkhelmet.prism.Prism;
+import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -26,6 +27,7 @@ public class CNLocalization {
 
     private static final Map<EntityType, String> entityLocalize = new EnumMap<>(EntityType.class);
     private static final Map<Material, String> materialLocalize = new EnumMap<>(Material.class);
+    private static final Map<DyeColor, String> dyeColorLocalize = new EnumMap<>(DyeColor.class);
     private static final Map<PotionEffectType, String> effectLocalize = new HashMap<>();
     private static final Map<Enchantment, String> enchantmentLocalize = new HashMap<>();
 
@@ -160,6 +162,26 @@ public class CNLocalization {
         warnMissing("Material", missing);
         missing.clear();
 
+        for (DyeColor value : DyeColor.values()) {
+            Material dye = Material.matchMaterial(value.name() + "_DYE");
+            if (dye == null) {
+                missing.add(value.name());
+                dyeColorLocalize.put(value, value.name().toLowerCase().replace("_", " "));
+            } else {
+                String materialLocale = materialLocalize.get(dye);
+                if (materialLocale.equals(dye.name().toLowerCase().replace("_", " "))) {
+                    // Material doesn't have locale
+                    missing.add(value.name() + " (Can't get mat)");
+                    dyeColorLocalize.put(value, value.name().toLowerCase().replace("_", " "));
+                } else {
+                    dyeColorLocalize.put(value, materialLocale.substring(0, materialLocale.length() - 2));
+                }
+            }
+        }
+        warnMissing("DyeColor", missing);
+        missing.clear();
+
+
         for (PotionEffectType value : PotionEffectType.values()) {
             if (Prism.getInstance().getServerMajorVersion() >= 19) {
                 JsonElement element = object.get("effect.minecraft." + value.getKey().getKey());
@@ -224,6 +246,10 @@ public class CNLocalization {
 
     public static String getEntityLocale(String entityType) {
         return entityLocalize.get(EntityType.valueOf(entityType));
+    }
+
+    public static String getDyeColorLocale(DyeColor dyeColor) {
+        return dyeColorLocalize.get(dyeColor);
     }
 
     public static String getEffectLocale(PotionEffectType potionEffectType) {

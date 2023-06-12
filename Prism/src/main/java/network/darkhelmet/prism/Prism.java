@@ -116,6 +116,7 @@ public class Prism extends JavaPlugin implements PrismApi {
     private static String baseUrl = "https://prism-cn.readthedocs.io/zh_CN/latest/";
     public static Messenger messenger;
     public static FileConfiguration config;
+    public static boolean isSpigot = true;
     public static boolean isPaper = true;
     public static boolean isFolia = false;
     private static Logger prismLog;
@@ -407,6 +408,7 @@ public class Prism extends JavaPlugin implements PrismApi {
         log("");
         serverMajorVersion = Byte.parseByte(Bukkit.getServer().getBukkitVersion().split("\\.")[1].split("-")[0]);
         loadConfig();        // Load configuration, or install if new
+        isSpigot = PaperLib.isSpigot();
         isPaper = PaperLib.isPaper();
         if (isPaper) {
             Prism.log("将启用可选的 Paper 事件.");
