@@ -9,6 +9,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.Connection;
+import java.util.Locale;
 
 public class PrismDatabaseFactory {
 
@@ -40,21 +41,21 @@ public class PrismDatabaseFactory {
             dataSourceProperties = dataSourceSection.createSection("properties");
         }
         String dataType = dataSourceSection.getString("type","mysql");
-        updateDataSourceProperties(dataType,dataSourceProperties);
+        updateDataSourceProperties(dataType, dataSourceProperties);
         addDatabaseDefaults(configuration);
     }
 
     private static void updateDataSourceProperties(@Nullable final String type,
                                                    final ConfigurationSection configuration) {
         String test = type;
-        if (test  == null) {
+        if (test == null) {
             test = "mysql";
         }
-        switch (test) {
-            case "mysql":
+        switch (test.toUpperCase(Locale.ROOT)) {
+            case "MYSQL":
                 MySqlPrismDataSource.updateDefaultConfig(configuration);
                 break;
-            case "hikari":
+            case "HIKARI":
             default:
                 SqlPrismDataSource.updateDefaultConfig(configuration);
         }
@@ -82,44 +83,26 @@ public class PrismDatabaseFactory {
         if (configuration == null) {
             return null;
         }
-        String dataSource;
-        ConfigurationSection dataSourceProperties;
 
-        if (configuration.isConfigurationSection("datasource")) {
-            ConfigurationSection dataSourceSection = configuration.getConfigurationSection("datasource");
-            if (dataSourceSection != null) {  //in case they didnt update the config.
-                dataSource = dataSourceSection.getString("type");
-                dataSourceProperties = dataSourceSection.getConfigurationSection("properties");
-            } else {
-                //old config style
-                dataSource = configuration.getString("datasource");
-                dataSourceProperties = configuration.getConfigurationSection("prism." + dataSource);
-            }
-        } else {
-            //old config style
-            dataSource = configuration.getString("datasource");
-            dataSourceProperties = configuration.getConfigurationSection("prism." + dataSource);
-        }
-        if (dataSource == null) {
-            return null;
-        }
-        switch (dataSource) {
-            case "mysql":
-                Prism.log("正在尝试作为 MySQL 配置数据源.");
+        String dataSource = configuration.getString("datasource.type");
+        ConfigurationSection dataSourceProperties = configuration.getConfigurationSection("datasource.properties");
+        switch (dataSource.toUpperCase(Locale.ROOT)) {
+            case "MYSQL":
+                Prism.log("正在尝试以 MySQL 配置数据源.");
                 database = new MySqlPrismDataSource(dataSourceProperties);
                 break;
-            case "sqlite":
+            case "HIKARI":
+                Prism.log("正在尝试使用 Hikari 参数配置数据源.");
+                database = new PrismHikariDataSource(dataSourceProperties);
+                break;
+            case "SQLITE":
                 Prism.warn("错误: 该版本的 Prism 已不再支持 SQLite.");
                 break;
             case "derby":
                 Prism.warn("错误: 该版本的 Prism 已不再支持 Derby. 请使用 Hikari.");
                 break;
-            case "hikari":
-                Prism.log("正在尝试使用 Hikari 参数配置数据源.");
-                database = new PrismHikariDataSource(dataSourceProperties);
-                break;
             default:
-                Prism.warn("错误: 此版本的 Prism 不支持使用 " + dataSource);
+                Prism.warn("错误: Prism 没有针对 " + dataSource + " 数据源类型的规则. 请使用 MySQL 或 Hikari.");
                 break;
         }
         return database;
@@ -134,14 +117,9 @@ public class PrismDatabaseFactory {
         if (configuration == null) {
             return null;
         }
-        String dataSource = configuration.getString("type", "mysql");
-        if (dataSource == null) {
-            return null;
-        }
-        switch (dataSource) {
-            case "mysql":
-            case "derby":
-            case "sqlite":
+        switch (configuration.getString("datasource.type").toUpperCase(Locale.ROOT)) {
+            case "MYSQL":
+            case "HIKARI":
                 return new SqlPrismDataSourceUpdater(database);
             default:
                 return null;
