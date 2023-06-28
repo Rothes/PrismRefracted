@@ -168,19 +168,25 @@ public class PrismExplodeEvents implements Listener {
                     // Ghast or something, attacking player or others.
                     addCache(shooter, "与" + CNLocalization.getEntityLocale(((Mob) shooter).getType()) + "战斗时射击" + projName,
                             (target instanceof Player) ? target.getName() : CNLocalization.getEntityLocale(target.getType()));
+                    addCache(entity, "与" + CNLocalization.getEntityLocale(((Mob) shooter).getType()) + "战斗时射击" + projName,
+                            (target instanceof Player) ? target.getName() : CNLocalization.getEntityLocale(target.getType()));
                     return;
                 }
             }
             // Mostly players.
             addCache(shooter, "射击" + projName,
                     (shooter instanceof Player) ? ((Entity) shooter).getName() : CNLocalization.getEntityLocale(((Entity) shooter).getType()));
+            addCache(entity, "射击" + projName,
+                    (shooter instanceof Player) ? ((Entity) shooter).getName() : CNLocalization.getEntityLocale(((Entity) shooter).getType()));
 
         } else if (shooter instanceof BlockProjectileSource) {
             // Like dispenser with fireball.....
             addCache(shooter, "射击" + projName, CNLocalization.getMaterialLocale(((BlockProjectileSource) shooter).getBlock().getType()));
+            addCache(entity, "射击" + projName, CNLocalization.getMaterialLocale(((BlockProjectileSource) shooter).getBlock().getType()));
         } else {
             // If not listed here...
             addCache(shooter, "射击" + projName, shooter.getClass().getName());
+            addCache(entity, "射击" + projName, shooter.getClass().getName());
         }
     }
 
