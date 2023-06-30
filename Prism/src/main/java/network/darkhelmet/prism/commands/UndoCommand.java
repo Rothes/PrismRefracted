@@ -65,14 +65,7 @@ public class UndoCommand implements SubHandler {
             final PrismProcessAction process = aq.getPrismProcessRecord(recordId);
             if (process == null) {
                 Prism.messenger.sendMessage(call.getPlayer(),
-                        Prism.messenger.playerError("不存在此值的操作记录."));
-                return;
-            }
-
-            // We only support this for drains
-            if (!process.getProcessChildActionType().equals("prism-drain")) {
-                Prism.messenger.sendMessage(call.getPlayer(),
-                        Prism.messenger.playerError("目前您仅可以撤销排水操作."));
+                        Prism.messenger.playerError("不存在此值的操作记录, 或对应ID不是操作类行为."));
                 return;
             }
 
