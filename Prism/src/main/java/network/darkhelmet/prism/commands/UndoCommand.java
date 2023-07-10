@@ -69,6 +69,13 @@ public class UndoCommand implements SubHandler {
                 return;
             }
 
+            // We only support this for drains
+            if (!process.getProcessChildActionType().equals("prism-drain")) {
+                Prism.messenger.sendMessage(call.getPlayer(),
+                        Prism.messenger.playerError("目前, 您只可以撤销 Prism 的排水操作."));
+                return;
+            }
+
             // Pull the actual block change data for this undo event
             final QueryParameters parameters = new QueryParameters();
             parameters.setWorld(call.getPlayer().getWorld().getName());
