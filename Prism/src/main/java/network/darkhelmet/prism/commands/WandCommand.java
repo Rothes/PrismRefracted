@@ -121,7 +121,7 @@ public class WandCommand extends AbstractCommand {
          */
         switch (type.toLowerCase()) {
             case "i":
-            case "inpect":
+            case "inspect":
             case "检查":
                 if (checkNoPermissions(call.getPlayer(), "prism.lookup", "prism.wand.inspect")) {
                     return;
