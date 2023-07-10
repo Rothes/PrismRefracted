@@ -1,11 +1,11 @@
 {
   "Version_Channels": {
     "Stable": {
-      "Latest_Version_Number": 30,
+      "Latest_Version_Number": 31,
       "Actions": [],
       "Log_Level": "Info",
       "Message": {
-        "zh-CN": "§bPrism 折射 中文版有新版本 (\"3.7.0-CN-b2\") 了!\n§b请更新您的插件: https://beta.mcbbs.net/resource/servermod/qcnedi83"
+        "zh-CN": "§bPrism 折射 中文版有新版本 (\"3.7.0-CN-b3\") 了!\n§b请更新您的插件: https://beta.mcbbs.net/resource/servermod/qcnedi83"
       }
     },
     "Stable-1.17-1.18": {
@@ -53,7 +53,7 @@
       "Actions": [],
       "Message_Times": 1,
       "Message": {
-        "zh-CN": "§b使用插件时遇到任何问题, 请加入我们的 QQ群: 422532220!"
+        "zh-CN": "§b使用插件时遇到任何问题, 欢迎加入我们的 QQ群: 422532220!"
       }
     }
   }
