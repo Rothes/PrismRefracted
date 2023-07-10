@@ -111,7 +111,7 @@ public class HangingItemAction extends GenericAction {
      */
     private ChangeResult hangItem(Player player, PrismParameters parameters, boolean isPreview) {
         if (actionData == null) {
-            Prism.debug(parameters.getProcessType() + "已跳过 - 悬挂上行为数据为 null");
+            Prism.debug(parameters.getProcessType() + "已跳过 - 悬挂行为数据为 null");
             return new ChangeResultImpl(ChangeResultType.SKIPPED, null);
         }
 
@@ -122,25 +122,25 @@ public class HangingItemAction extends GenericAction {
 
         // Ensure there's a block at this location that accepts an attachment
         if (Utilities.materialMeansBlockDetachment(loc.getBlock().getType())) {
-            Prism.debug(parameters.getProcessType() + "悬挂上已跳过 - 方块会脱离: "
+            Prism.debug(parameters.getProcessType() + "悬挂已跳过 - 方块会脱离: "
                     + loc.getBlock().getType());
             return new ChangeResultImpl(ChangeResultType.SKIPPED, null);
         }
         try {
-            if (getHangingType().equals("物品展示框")) {
-                if (isPreview) {
-                    // TODO: just returning PLANNED, not previewed right now.
-                    return new ChangeResultImpl(ChangeResultType.PLANNED, null);
-                }
+            if (isPreview) {
+                return new ChangeResultImpl(ChangeResultType.PLANNED, null);
+            }
+            if (getHangingType().equals("item_frame")) {
                 final Hanging hangingItem = getWorld().spawn(loc, ItemFrame.class);
                 hangingItem.setFacingDirection(attachedFace, true);
                 return new ChangeResultImpl(ChangeResultType.APPLIED, null); //no change recorded
-            } else if (getHangingType().equals("画")) {
-                if (isPreview) {
-                    return new ChangeResultImpl(ChangeResultType.PLANNED, null);
-                }
+            } else if (getHangingType().equals("glow_item_frame")) {
+                final GlowItemFrame hangingItem = getWorld().spawn(loc, GlowItemFrame.class);
+                hangingItem.setFacingDirection(attachedFace, true);
+                return new ChangeResultImpl(ChangeResultType.APPLIED, null); //no change recorded
+            } else if (getHangingType().equals("painting")) {
                 final Painting hangingItem = getWorld().spawn(loc, Painting.class);
-                hangingItem.setFacingDirection(getDirection(), true);
+                hangingItem.setFacingDirection(attachedFace, true);
                 Art art = Art.getByName(getArt());
                 if (art != null) {
                     hangingItem.setArt(art);
