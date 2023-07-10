@@ -266,7 +266,11 @@ public class CNLocalization {
     }
 
     public static String getEntityLocale(String entityType) {
-        return entityLocalize.get(EntityType.valueOf(entityType));
+        try {
+            return entityLocalize.get(EntityType.valueOf(entityType));
+        } catch (IllegalArgumentException e) {
+            return entityType;
+        }
     }
 
     public static String getDyeColorLocale(DyeColor dyeColor) {
