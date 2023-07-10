@@ -34,7 +34,7 @@ public class EntityAction extends GenericAction {
             // In pre-RC builds we logged the wrong name of entities, sometimes
             // the names
             // don't match the enum.
-            Prism.debug("无法获取 EntityType, 传参为 " + name + ", 英文为 " + CNLocalization.restoreEntityLocale(name.toUpperCase(Locale.ROOT)));
+            Prism.debug("无法获取 EntityType, 传参为 " + name + ", 转换的英文为 " + CNLocalization.restoreEntityLocale(name.toUpperCase(Locale.ROOT))); // CN Edition added debug
         }
         return null;
     }

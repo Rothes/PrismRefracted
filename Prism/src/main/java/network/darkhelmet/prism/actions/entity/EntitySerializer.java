@@ -14,6 +14,8 @@ import org.bukkit.entity.Tameable;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 
+import java.util.Locale;
+
 public class EntitySerializer {
     //@todo remove alternates after 2.1.7 release
     protected Boolean isAdult = null;
@@ -50,7 +52,7 @@ public class EntitySerializer {
      * @param entity Entity.
      */
     public final void serialize(Entity entity) {
-        entityName = CNLocalization.getEntityLocale(entity.getType());
+        entityName = entity.getType().name().toLowerCase();
 
         // Get custom name
         customName = entity.getCustomName();
@@ -66,7 +68,7 @@ public class EntitySerializer {
             if (mob.getOwner() != null) {
                 tamingOwner = mob.getOwner().getUniqueId().toString();
             } else if (mob.isTamed()) {
-                tamingOwner = "-无-";
+                tamingOwner = "-none-";
             }
         }
 
@@ -134,7 +136,7 @@ public class EntitySerializer {
         int index = 0;
         if (tamingOwner != null) {
 
-            OfflinePlayer player = EntityUtils.offlineOf(tamingOwner);
+            OfflinePlayer player = EntityUtils.offlineOf(tamingOwner.equals("-none-") ? "-无-" : tamingOwner);
             if (player != null) {
                 String str = player.getName() + "的 ";
                 sb.append(str);
@@ -146,7 +148,7 @@ public class EntitySerializer {
             sb.append("小");
         }
 
-        sb.append(MiscUtils.niceName(entityName));
+        sb.append(MiscUtils.niceName(CNLocalization.getEntityLocale(entityName.toUpperCase(Locale.ROOT))));
 
         if (newColor != null) {
             sb.append(' ').append(MiscUtils.niceName(newColor));
