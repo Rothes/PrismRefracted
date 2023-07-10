@@ -37,8 +37,8 @@ public class SignGlowAction extends GenericAction {
 
     @Override
     public ChangeResult applyRollback(Player player, PrismParameters parameters, boolean isPreview) {
-        ChangeResult changeResult = setSignGlow(!actionData.makeGlow);
-        if (changeResult.getType() == ChangeResultType.APPLIED) {
+        ChangeResult changeResult = setSignGlow(!actionData.makeGlow, isPreview);
+        if (changeResult.getType() == ChangeResultType.APPLIED && !isPreview) {
             placeInkItem(true);
         }
         return changeResult;
@@ -46,14 +46,14 @@ public class SignGlowAction extends GenericAction {
 
     @Override
     public ChangeResult applyRestore(Player player, PrismParameters parameters, boolean isPreview) {
-        ChangeResult changeResult = setSignGlow(actionData.makeGlow);
+        ChangeResult changeResult = setSignGlow(actionData.makeGlow, isPreview);
         if (changeResult.getType() == ChangeResultType.APPLIED) {
             placeInkItem(false);
         }
         return changeResult;
     }
 
-    private ChangeResult setSignGlow(boolean glow) {
+    private ChangeResult setSignGlow(boolean glow, boolean isPreview) {
         final Block block = getWorld().getBlockAt(getLoc());
 
         // Ensure a sign exists there (and no other block)
@@ -62,6 +62,10 @@ public class SignGlowAction extends GenericAction {
 
             // Set the content
             if (block.getState() instanceof Sign) {
+                if (isPreview) {
+                    // TODO: just returning PLANNED, not previewed right now.
+                    return new ChangeResultImpl(ChangeResultType.PLANNED, null);
+                }
 
                 // Set sign data
                 final Sign sign = (Sign) block.getState();

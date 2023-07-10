@@ -39,7 +39,7 @@ processResources {
 dependencies {
     compileOnly project(":Prism:Folia-Wrapper")  // Works only when targetCompatibility is set to Java17
     compileOnly files(projectDir.path + '/libs/folia-wrapper.jar')  // Created when Folia-Wrapper is built
-    compileOnly 'org.spigotmc:spigot-api:1.20-R0.1-SNAPSHOT'
+    compileOnly 'org.spigotmc:spigot-api:1.20.1-R0.1-SNAPSHOT'
 
     compileOnly('com.sk89q.worldedit:worldedit-bukkit:7.2.0-SNAPSHOT') {
         exclude group: 'org.spigotmc', module: 'spigot-api'

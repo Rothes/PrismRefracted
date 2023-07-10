@@ -108,7 +108,6 @@ public class HangingItemAction extends GenericAction {
      * @param parameters Query params
      * @param isPreview is preview.
      * @return ChangeResult
-     * @todo I am not sure this actual is used during preview?? also no rollback info is saved to undo this.
      */
     private ChangeResult hangItem(Player player, PrismParameters parameters, boolean isPreview) {
         if (actionData == null) {
@@ -129,10 +128,17 @@ public class HangingItemAction extends GenericAction {
         }
         try {
             if (getHangingType().equals("物品展示框")) {
+                if (isPreview) {
+                    // TODO: just returning PLANNED, not previewed right now.
+                    return new ChangeResultImpl(ChangeResultType.PLANNED, null);
+                }
                 final Hanging hangingItem = getWorld().spawn(loc, ItemFrame.class);
                 hangingItem.setFacingDirection(attachedFace, true);
                 return new ChangeResultImpl(ChangeResultType.APPLIED, null); //no change recorded
             } else if (getHangingType().equals("画")) {
+                if (isPreview) {
+                    return new ChangeResultImpl(ChangeResultType.PLANNED, null);
+                }
                 final Painting hangingItem = getWorld().spawn(loc, Painting.class);
                 hangingItem.setFacingDirection(getDirection(), true);
                 Art art = Art.getByName(getArt());

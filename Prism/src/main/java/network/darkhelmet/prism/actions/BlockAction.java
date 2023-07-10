@@ -15,6 +15,8 @@ import network.darkhelmet.prism.utils.block.Utilities;
 import io.github.rothes.prismcn.CNLocalization;
 import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Nameable;
 import org.bukkit.Tag;
 import org.bukkit.block.Banner;
@@ -23,6 +25,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.CommandBlock;
 import org.bukkit.block.CreatureSpawner;
+import org.bukkit.block.DecoratedPot;
 import org.bukkit.block.Sign;
 import org.bukkit.block.Skull;
 import org.bukkit.block.banner.Pattern;
@@ -37,6 +40,7 @@ import org.bukkit.block.data.type.Bed;
 import org.bukkit.block.data.type.Bed.Part;
 import org.bukkit.block.data.type.RespawnAnchor;
 import org.bukkit.block.sign.Side;
+import org.bukkit.block.sign.SignSide;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -48,20 +52,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import static org.bukkit.Material.AIR;
-import static org.bukkit.Material.CHEST;
-import static org.bukkit.Material.COMMAND_BLOCK;
-import static org.bukkit.Material.FARMLAND;
-import static org.bukkit.Material.FIRE;
-import static org.bukkit.Material.JUKEBOX;
-import static org.bukkit.Material.NETHER_PORTAL;
-import static org.bukkit.Material.OBSIDIAN;
-import static org.bukkit.Material.PLAYER_HEAD;
-import static org.bukkit.Material.PLAYER_WALL_HEAD;
-import static org.bukkit.Material.RESPAWN_ANCHOR;
-import static org.bukkit.Material.SPAWNER;
-import static org.bukkit.Material.TRAPPED_CHEST;
-import static org.bukkit.Material.WATER;
+import static org.bukkit.Material.*;
 
 
 public class BlockAction extends GenericAction {
@@ -140,12 +131,23 @@ public class BlockAction extends GenericAction {
                     final SignActionData signActionData = new SignActionData();
                     final Sign sign = (Sign) state;
                     signActionData.lines = sign.getLines();
+                    signActionData.color = sign.getColor();
+                    if (Prism.getInstance().getServerMajorVersion() >= 17)
+                        signActionData.glowing = sign.isGlowingText();
                     if (POST_20) {
-                        signActionData.backLines = sign.getSide(Side.BACK).getLines();
+                        SignSide backSide = sign.getSide(Side.BACK);
+                        signActionData.backLines = backSide.getLines();
+                        signActionData.backColor = backSide.getColor();
+                        signActionData.backGlowing = backSide.isGlowingText();
                     }
                     actionData = signActionData;
-                }
-                if (Tag.BANNERS.isTagged(state.getType())) {
+                } else if (POST_20 && state.getType() == Material.DECORATED_POT) {
+                    final DecoratedPot pot = (DecoratedPot) state;
+                    final PotActionData potActionData = new PotActionData();
+                    potActionData.shards = pot.getShards();
+                    setBlockRotation(state, potActionData);
+                    actionData = potActionData;
+                } else if (Tag.BANNERS.isTagged(state.getType())) {
                     final BannerActionData bannerActionData = new BannerActionData();
                     final Banner banner = (Banner) state;
                     bannerActionData.patterns = new HashMap<>();
@@ -201,13 +203,19 @@ public class BlockAction extends GenericAction {
                 actionData = gson().fromJson(data, CommandActionData.class);
             } else if (getMaterial() == RESPAWN_ANCHOR) {
                 actionData = gson().fromJson(data, RespawnAnchorActionData.class);
+            } else if (POST_20 && getMaterial() == DECORATED_POT) {
+                actionData = gson().fromJson(data, PotActionData.class);
             } else {
                 actionData = gson().fromJson(data, BlockActionData.class);
             }
         }
     }
 
-    private BlockActionData getActionData() {
+    protected void setActionData(BlockActionData actionData) {
+        this.actionData = actionData;
+    }
+
+    protected BlockActionData getActionData() {
         return actionData;
     }
 
@@ -442,8 +450,7 @@ public class BlockAction extends GenericAction {
                     && !blockActionData.customName.equals("")) {
                 ((Nameable) newState).setCustomName(blockActionData.customName);
             }
-            if (parameters.getProcessType() == PrismProcessType.ROLLBACK
-                    && Tag.SIGNS.isTagged(getMaterial())
+            if ((Tag.SIGNS.isTagged(getMaterial()) || (POST_20 && Tag.ALL_SIGNS.isTagged(getMaterial())))
                     && blockActionData instanceof SignActionData) {
 
                 final SignActionData s = (SignActionData) blockActionData;
@@ -454,17 +461,41 @@ public class BlockAction extends GenericAction {
                 // cannot be cast to org.bukkit.block.Sign
                 // https://snowy-evening.com/botsko/prism/455/
                 if (newState instanceof Sign) {
+                    Sign signState = (Sign) newState;
                     if (s.lines != null) {
                         for (int i = 0; i < s.lines.length; ++i) {
-                            ((Sign) newState).setLine(i, s.lines[i]);
+                            signState.setLine(i, s.lines[i]);
                         }
                     }
+                    if (s.color != null) {
+                        signState.setColor(s.color);
+                    }
+                    if (Prism.getInstance().getServerMajorVersion() >= 17) {
+                        signState.setGlowingText(s.glowing);
+                    }
                     if (POST_20 && s.backLines != null) {
+                        SignSide signSide = signState.getSide(Side.BACK);
                         for (int i = 0; i < s.backLines.length; ++i) {
-                            ((Sign) newState).getSide(Side.BACK).setLine(i, s.backLines[i]);
+                            signSide.setLine(i, s.backLines[i]);
+                        }
+                        if (s.backColor != null) { // Support for v3.7.0-CN-b2
+                            signSide.setColor(s.backColor);
+                            signSide.setGlowingText(s.backGlowing);
                         }
                     }
                 }
+            }
+            System.out.println(getMaterial());
+            System.out.println(actionData.getClass().getName());
+            if (POST_20 && getMaterial() == DECORATED_POT && actionData instanceof PotActionData) {
+                Location location = block.getLocation();
+                PotActionData potActionData = (PotActionData) actionData;
+                // TODO: getShards not mutable; waiting for API
+//                DecoratedPot pot = (DecoratedPot) newState;
+//                List<Material> shards = pot.getShards();
+//                shards.clear();
+//                shards.addAll((potActionData).shards);
+                setBlockRotatable(newState, potActionData);
             }
         } else {
             Prism.debug("BlockAction 数据为 null :" + parameters.toString());
@@ -676,6 +707,12 @@ public class BlockAction extends GenericAction {
 
     }
 
+    public static class PotActionData extends RotatableActionData {
+
+        List<Material> shards;
+
+    }
+
     /**
      * Not to be confused with SignChangeActionData, which records additional data
      * we don't need here.
@@ -684,7 +721,11 @@ public class BlockAction extends GenericAction {
      */
     public static class SignActionData extends BlockActionData {
         String[] lines;
+        DyeColor color;
+        boolean glowing;
         String[] backLines;
+        DyeColor backColor;
+        boolean backGlowing;
     }
 
     public static class BannerActionData extends RotatableActionData {
