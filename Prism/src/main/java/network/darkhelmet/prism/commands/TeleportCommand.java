@@ -1,5 +1,6 @@
 package network.darkhelmet.prism.commands;
 
+import io.papermc.lib.PaperLib;
 import network.darkhelmet.prism.Il8nHelper;
 import network.darkhelmet.prism.Prism;
 import network.darkhelmet.prism.actionlibs.ActionsQuery;
@@ -135,8 +136,18 @@ public class TeleportCommand implements SubHandler {
                         Prism.messenger.playerError("此行为记录于一个我们无法找到的世界中."));
                 return;
             }
-            sendTeleportCompleteMessage(EntityUtils.teleportEntity(call.getPlayer(), destinationAction.getLoc()),
-                    call.getPlayer(), destinationAction);
+            if (Prism.isFolia) {
+                call.getPlayer().teleportAsync(destinationAction.getLoc())
+                        .thenAccept(
+                                success -> sendTeleportCompleteMessage(success, call.getPlayer(), destinationAction));
+            } else if (PaperLib.isPaper()) {
+                PaperLib.teleportAsync(call.getPlayer(), destinationAction.getLoc())
+                        .thenAccept(
+                                success -> sendTeleportCompleteMessage(success, call.getPlayer(), destinationAction));
+            } else {
+                sendTeleportCompleteMessage(call.getPlayer().teleport(destinationAction.getLoc()), call.getPlayer(),
+                        destinationAction);
+            }
         }
     }
 
