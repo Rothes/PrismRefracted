@@ -207,8 +207,6 @@ public class BlockAction extends GenericAction {
                 actionData = gson().fromJson(data, RespawnAnchorActionData.class);
             } else if (POST_20 && getMaterial() == DECORATED_POT) {
                 actionData = gson().fromJson(data, PotActionData.class);
-            } else if (POST_20 && getMaterial() == DECORATED_POT) {
-                actionData = gson().fromJson(data, PotActionData.class);
             } else {
                 actionData = gson().fromJson(data, BlockActionData.class);
             }

@@ -63,7 +63,7 @@ public class PrismBlockEvents implements Listener {
             try {
                 DecoratedPot.class.getMethod("getSherds");
             } catch (NoSuchMethodException e) {
-                Prism.warn("Your server doesn't implement the methods we need, Please update to the latest build!");
+                Prism.warn("您的服务端未实现我们需要的方法函数, 请更新服务端到最新构建!");
             }
         }
     }
