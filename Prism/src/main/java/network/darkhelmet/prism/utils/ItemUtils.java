@@ -445,7 +445,7 @@ public class ItemUtils {
         if (meta instanceof LeatherArmorMeta) {
             LeatherArmorMeta lam = (LeatherArmorMeta) meta;
             if (lam.getColor() != Bukkit.getItemFactory().getDefaultLeatherColor()) {
-                itemName.append(" 染色了");
+                itemName.append(" 已染色");
             }
         } else if (meta instanceof SkullMeta) {
             SkullMeta skull = (SkullMeta) meta;
@@ -487,10 +487,10 @@ public class ItemUtils {
                         itemName.append(" ").append(effect.getFadeColors().size()).append(" 淡化颜色");
                     }
                     if (effect.hasFlicker()) {
-                        itemName.append(" 闪烁效果");
+                        itemName.append(" 含闪烁效果");
                     }
                     if (effect.hasTrail()) {
-                        itemName.append(" 拖曳痕迹");
+                        itemName.append(" 含拖曳痕迹");
                     }
                 }
             }
@@ -571,5 +571,4 @@ public class ItemUtils {
             dropItem(location, is);
         }
     }
-
 }

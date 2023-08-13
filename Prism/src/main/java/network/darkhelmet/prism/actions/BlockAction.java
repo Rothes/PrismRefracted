@@ -47,6 +47,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -144,7 +145,8 @@ public class BlockAction extends GenericAction {
                 } else if (POST_20 && state.getType() == Material.DECORATED_POT) {
                     final DecoratedPot pot = (DecoratedPot) state;
                     final PotActionData potActionData = new PotActionData();
-                    potActionData.shards = pot.getShards();
+                    Map<DecoratedPot.Side, Material> sherds = pot.getSherds();
+                    potActionData.sherds = Arrays.stream(DecoratedPot.Side.values()).map(sherds::get).toArray(Material[]::new);
                     setBlockRotation(state, potActionData);
                     actionData = potActionData;
                 } else if (Tag.BANNERS.isTagged(state.getType())) {
@@ -203,6 +205,8 @@ public class BlockAction extends GenericAction {
                 actionData = gson().fromJson(data, CommandActionData.class);
             } else if (getMaterial() == RESPAWN_ANCHOR) {
                 actionData = gson().fromJson(data, RespawnAnchorActionData.class);
+            } else if (POST_20 && getMaterial() == DECORATED_POT) {
+                actionData = gson().fromJson(data, PotActionData.class);
             } else if (POST_20 && getMaterial() == DECORATED_POT) {
                 actionData = gson().fromJson(data, PotActionData.class);
             } else {
@@ -483,7 +487,36 @@ public class BlockAction extends GenericAction {
                             signSide.setGlowingText(s.backGlowing);
                         }
                     }
+                    if (s.color != null) {
+                        signState.setColor(s.color);
+                    }
+                    if (Prism.getInstance().getServerMajorVersion() >= 17) {
+                        signState.setGlowingText(s.glowing);
+                    }
+                    if (POST_20 && s.backLines != null) {
+                        SignSide signSide = signState.getSide(Side.BACK);
+                        for (int i = 0; i < s.backLines.length; ++i) {
+                            signSide.setLine(i, s.backLines[i]);
+                        }
+                        signSide.setColor(s.backColor);
+                        signSide.setGlowingText(s.backGlowing);
+                    }
                 }
+            }
+            if (POST_20 && getMaterial() == DECORATED_POT && actionData instanceof PotActionData) {
+                PotActionData potActionData = (PotActionData) actionData;
+                if (potActionData.sherds != null) {
+                    DecoratedPot pot = (DecoratedPot) newState;
+
+                    DecoratedPot.Side[] sides = DecoratedPot.Side.values();
+                    // Math.min : not necessary but might be safe for later minecraft updates
+                    for (int i = 0, length = Math.min(sides.length, potActionData.sherds.length); i < length; i++) {
+                        DecoratedPot.Side side = sides[i];
+                        pot.setSherd(side, potActionData.sherds[i]);
+                    }
+                }
+
+                setBlockRotatable(newState, potActionData);
             }
             System.out.println(getMaterial());
             System.out.println(actionData.getClass().getName());
@@ -709,7 +742,10 @@ public class BlockAction extends GenericAction {
 
     public static class PotActionData extends RotatableActionData {
 
-        List<Material> shards;
+        /**
+         * BACK, LEFT, RIGHT, FRONT on Spigot 1.20.1
+         */
+        Material[] sherds;
 
     }
 
