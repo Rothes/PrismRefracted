@@ -485,20 +485,6 @@ public class BlockAction extends GenericAction {
                             signSide.setGlowingText(s.backGlowing);
                         }
                     }
-                    if (s.color != null) {
-                        signState.setColor(s.color);
-                    }
-                    if (Prism.getInstance().getServerMajorVersion() >= 17) {
-                        signState.setGlowingText(s.glowing);
-                    }
-                    if (POST_20 && s.backLines != null) {
-                        SignSide signSide = signState.getSide(Side.BACK);
-                        for (int i = 0; i < s.backLines.length; ++i) {
-                            signSide.setLine(i, s.backLines[i]);
-                        }
-                        signSide.setColor(s.backColor);
-                        signSide.setGlowingText(s.backGlowing);
-                    }
                 }
             }
             if (POST_20 && getMaterial() == DECORATED_POT && actionData instanceof PotActionData) {
