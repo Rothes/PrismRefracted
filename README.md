@@ -50,5 +50,5 @@ Prism 根据 Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported 
 [discord]: https://discord.gg/7FxZScH4EJ
 [spigot]: https://www.spigotmc.org/resources/prism-refracted.99397/
 [jenkins]: https://ci.darkhelmet.network/job/Prism/
-[mcbbsv4]: https://beta.mcbbs.net/resource/qcnedi83
+[mcbbsv4]: https://beta.mcbbs.net/resource/servermod/qcnedi83
 [qq]: https://qm.qq.com/cgi-bin/qm/qr?k=mDtcrvBGzqbA05mPLzBnPAYXm5lskYxg&jump_from=webapi
