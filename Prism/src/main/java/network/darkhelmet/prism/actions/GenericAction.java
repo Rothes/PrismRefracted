@@ -2,6 +2,7 @@ package network.darkhelmet.prism.actions;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import io.github.rothes.prismcn.CNLocalization;
 import network.darkhelmet.prism.Prism;
 import network.darkhelmet.prism.actionlibs.ActionTypeImpl;
 import network.darkhelmet.prism.api.ChangeResult;
@@ -218,7 +219,15 @@ public abstract class GenericAction implements Handler {
     @Override
     public @Nullable String getSourceName() {
         if (sourceName != null) {
-            return sourceName;
+            String material = CNLocalization.getMaterialLocale(sourceName);
+            if (!material.equals(sourceName)) {
+                return material;
+            }
+            String invType = CNLocalization.getInvTypeLocale(sourceName);
+            if (!invType.equals(sourceName)) {
+                return invType;
+            }
+            return CNLocalization.getEntityLocale(sourceName);
         }
         return Bukkit.getOfflinePlayer(playerUuid).getName();
     }

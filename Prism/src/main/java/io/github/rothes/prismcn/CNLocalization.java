@@ -11,6 +11,7 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.potion.PotionEffectType;
 
 import java.io.IOException;
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
 
@@ -31,6 +33,7 @@ public class CNLocalization {
     private static final Map<DyeColor, String> dyeColorLocalize = new EnumMap<>(DyeColor.class);
     private static final Map<PotionEffectType, String> effectLocalize = new HashMap<>();
     private static final Map<Enchantment, String> enchantmentLocalize = new HashMap<>();
+    private static final Map<InventoryType, String> invTypeLocalize = new EnumMap<>(InventoryType.class);
 
     private static final Map<String, String> entityLocalizeRestore = new HashMap<>();
     private static final Map<String, String> materialLocalizeRestore = new HashMap<>();
@@ -235,6 +238,15 @@ public class CNLocalization {
             }
         }
         warnMissing("Enchantment", missing);
+
+        for (InventoryType value : InventoryType.values()) {
+            JsonElement element = object.get("container." + value.name().toLowerCase());
+            if (element == null) {
+                invTypeLocalize.put(value, value.name().toLowerCase().replace('_', ' '));
+            } else {
+                invTypeLocalize.put(value, element.getAsString());
+            }
+        }
     }
 
     private static void warnMissing(String type, List<String> list) {
@@ -261,13 +273,21 @@ public class CNLocalization {
         return materialLocalize.get(material);
     }
 
+    public static String getMaterialLocale(String material) {
+        Material match = Material.matchMaterial(material.toUpperCase(Locale.ROOT).replace(' ', '_'));
+        if (match == null) {
+            return material;
+        }
+        return materialLocalize.get(match);
+    }
+
     public static String getEntityLocale(EntityType entityType) {
         return entityLocalize.get(entityType);
     }
 
     public static String getEntityLocale(String entityType) {
         try {
-            return entityLocalize.get(EntityType.valueOf(entityType));
+            return entityLocalize.get(EntityType.valueOf(entityType.toUpperCase(Locale.ROOT).replace(' ', '_')));
         } catch (IllegalArgumentException e) {
             return entityType;
         }
@@ -283,6 +303,14 @@ public class CNLocalization {
 
     public static String getEnchantmentLocale(Enchantment enchantment) {
         return enchantmentLocalize.get(enchantment);
+    }
+
+    public static String getInvTypeLocale(String invType) {
+        try {
+            return invTypeLocalize.get(InventoryType.valueOf(invType.toUpperCase().replace(' ', '_')));
+        } catch (IllegalArgumentException e) {
+            return invType;
+        }
     }
 
     public static String restoreEntityLocale(String type) {
