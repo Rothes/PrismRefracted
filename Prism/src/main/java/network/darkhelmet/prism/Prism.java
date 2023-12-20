@@ -148,6 +148,7 @@ public class Prism extends JavaPlugin implements PrismApi {
     public int totalRecordsAffected = 0;
     public long maxCycleTime = 0;
     private byte serverMajorVersion;
+    private byte serverMinorVersion;
 
     /**
      * We store a basic index of hanging entities we anticipate will fall, so that
@@ -380,6 +381,10 @@ public class Prism extends JavaPlugin implements PrismApi {
         return serverMajorVersion;
     }
 
+    public byte getServerMinorVersion() {
+        return serverMinorVersion;
+    }
+
     /**
      * Enables the plugin and activates our player listeners.
      */
@@ -399,7 +404,9 @@ public class Prism extends JavaPlugin implements PrismApi {
         log("§2 * 此汉化的 GitHub 为 https://github.com/Rothes/PrismRefracted");
         log("§a=============================================================");
         log("");
-        serverMajorVersion = Byte.parseByte(Bukkit.getServer().getBukkitVersion().split("\\.")[1].split("-")[0]);
+        String[] split = Bukkit.getServer().getBukkitVersion().split("\\.");
+        serverMajorVersion = Byte.parseByte(split[1].split("-")[0]);
+        serverMinorVersion = split.length > 2 ? Byte.parseByte(split[2].split("-")[0]) : 0;
         CNLocalization.initialize(instance);
         loadConfig();        // Load configuration, or install if new
         isSpigot = PaperLib.isSpigot();
