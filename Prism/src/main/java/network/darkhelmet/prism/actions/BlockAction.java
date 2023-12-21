@@ -502,18 +502,6 @@ public class BlockAction extends GenericAction {
 
                 setBlockRotatable(newState, potActionData);
             }
-            System.out.println(getMaterial());
-            System.out.println(actionData.getClass().getName());
-            if (POST_20 && getMaterial() == DECORATED_POT && actionData instanceof PotActionData) {
-                Location location = block.getLocation();
-                PotActionData potActionData = (PotActionData) actionData;
-                // TODO: getShards not mutable; waiting for API
-//                DecoratedPot pot = (DecoratedPot) newState;
-//                List<Material> shards = pot.getShards();
-//                shards.clear();
-//                shards.addAll((potActionData).shards);
-                setBlockRotatable(newState, potActionData);
-            }
         } else {
             Prism.debug("BlockAction 数据为 null :" + parameters.toString());
         }
