@@ -44,7 +44,7 @@ public class TeleportCommand implements SubHandler {
         }
         if (!plugin.cachedQueries.containsKey(keyName) && !call.getArg(1).contains("id:")) {
             Prism.messenger.sendMessage(call.getSender(), Prism.messenger.playerError(
-                    "您没有被保存的查询. 也许它们过期了? 试试再查询一次."));
+                    "您没有已保存的查询. 也许它们过期了? 试试再查询一次."));
             return;
         }
 
@@ -113,7 +113,7 @@ public class TeleportCommand implements SubHandler {
 
             if (recordId > results.getActionResults().size()) {
                 Prism.messenger.sendMessage(call.getPlayer(), Prism.messenger.playerError(
-                        "此索引的记录不存在. 您可能想使用的是 /pr tp id:" + recordId + " ?"));
+                        "此索引的记录不存在. 可能您想使用的是 /pr tp id:" + recordId + " ?"));
                 return;
             }
 

@@ -46,7 +46,7 @@ public class GiveCommand implements SubHandler {
         }
         if (!plugin.cachedQueries.containsKey(keyName) && !call.getArg(1).contains("id:")) {
             Prism.messenger.sendMessage(call.getSender(), Prism.messenger.playerError(
-                    "There's no saved query to use results from. Maybe they expired? Try your lookup again."));
+                    "您没有已保存的查询. 也许它们过期了? 试试再查询一次."));
             return;
         }
 
@@ -59,14 +59,14 @@ public class GiveCommand implements SubHandler {
         // Determine result index to give to - either an id, or the next/previous
         // id
         long recordId;
-        if (ident.equals("next") || ident.equals("prev")) {
+        if (ident.equals("next") || ident.equals("prev") || ident.equals("下") || ident.equals("上")) {
             // Get stored results
             final QueryResult results = plugin.cachedQueries.get(keyName);
             recordId = results.getLastGiveIndex();
             recordId = (recordId == 0 ? 1 : recordId);
             if (recordId > 0) {
                 long tempId = recordId;
-                if (ident.equals("next")) {
+                if (ident.equals("next") || ident.equals("下")) {
                     while (results.getActionResults().size() > tempId) {
                         tempId++;
                         if (results.getActionResults().get((int) tempId - 1) instanceof ItemStackAction) {
@@ -87,13 +87,13 @@ public class GiveCommand implements SubHandler {
         } else {
             if (!TypeUtils.isNumeric(ident)) {
                 Prism.messenger.sendMessage(call.getPlayer(), Prism.messenger
-                        .playerError("You must provide a numeric result number or record ID to give to."));
+                        .playerError("您必须提供一个结果编号数字或者记录ID来给予您物品."));
                 return;
             }
             recordId = Integer.parseInt(ident);
             if (recordId <= 0) {
                 Prism.messenger.sendMessage(call.getPlayer(),
-                        Prism.messenger.playerError("Result number or record ID must be greater than zero."));
+                        Prism.messenger.playerError("结果编号或记录ID必须大于0."));
                 return;
             }
         }
@@ -112,7 +112,7 @@ public class GiveCommand implements SubHandler {
             final QueryResult results = aq.lookup(params, call.getPlayer());
             if (results.getActionResults().isEmpty()) {
                 Prism.messenger.sendMessage(call.getPlayer(),
-                        Prism.messenger.playerError("No records exists with this ID."));
+                        Prism.messenger.playerError("此 ID 的记录不存在."));
                 return;
             }
 
@@ -126,7 +126,7 @@ public class GiveCommand implements SubHandler {
 
             if (recordId > results.getActionResults().size()) {
                 Prism.messenger.sendMessage(call.getPlayer(), Prism.messenger.playerError(
-                        "No records exists at this index. Did you mean /pr give id:" + recordId + " instead?"));
+                        "此索引的记录不存在. 可能您想使用的是 /pr give id:" + recordId + " ?"));
                 return;
             }
 
@@ -143,7 +143,7 @@ public class GiveCommand implements SubHandler {
 
         Player player = call.getPlayer();
         if (!(targetAction instanceof ItemStackAction)) {
-            Prism.messenger.sendMessage(player, Prism.messenger.playerError("The record at this index is not a ItemStackAction."));
+            Prism.messenger.sendMessage(player, Prism.messenger.playerError("此行为记录不属于 ItemStackAction."));
             return;
         }
         ItemStack item = ((ItemStackAction) targetAction).getItem();
