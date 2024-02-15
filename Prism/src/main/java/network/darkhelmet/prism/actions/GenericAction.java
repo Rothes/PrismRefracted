@@ -8,6 +8,7 @@ import network.darkhelmet.prism.actionlibs.ActionTypeImpl;
 import network.darkhelmet.prism.actions.typeadapter.BoolIgnoreFalseAdapter;
 import network.darkhelmet.prism.actions.typeadapter.IntIgnoreZeroAdapter;
 import network.darkhelmet.prism.actions.typeadapter.LongIgnoreZeroAdapter;
+import network.darkhelmet.prism.actions.typeadapter.ShortIgnoreZeroAdapter;
 import network.darkhelmet.prism.api.ChangeResult;
 import network.darkhelmet.prism.api.PrismParameters;
 import network.darkhelmet.prism.api.actions.ActionType;
@@ -29,7 +30,7 @@ public abstract class GenericAction implements Handler {
     private static final SimpleDateFormat time = new SimpleDateFormat("hh:mm:ssa");
     private static final Gson gson = new GsonBuilder().disableHtmlEscaping()
             .registerTypeAdapter(Integer.class, new IntIgnoreZeroAdapter())
-            .registerTypeAdapter(Short.class, new IntIgnoreZeroAdapter())
+            .registerTypeAdapter(Short.class, new ShortIgnoreZeroAdapter())
             .registerTypeAdapter(Boolean.class, new BoolIgnoreFalseAdapter())
             .registerTypeAdapter(Long.class, new LongIgnoreZeroAdapter())
             .create();
