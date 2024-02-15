@@ -1,8 +1,10 @@
 package network.darkhelmet.prism.actions.data;
 
 import com.google.gson.JsonParseException;
+import com.google.gson.annotations.JsonAdapter;
 import net.md_5.bungee.chat.ComponentSerializer;
 import network.darkhelmet.prism.Prism;
+import network.darkhelmet.prism.actions.typeadapter.ItemNiceNameIgnoreEmptyAdapter;
 import network.darkhelmet.prism.api.objects.MaterialState;
 import network.darkhelmet.prism.utils.EntityUtils;
 import network.darkhelmet.prism.utils.ItemUtils;
@@ -49,6 +51,7 @@ import java.util.stream.Collectors;
 public class ItemStackActionData {
     public int amt;
     public Material material;
+    @JsonAdapter(ItemNiceNameIgnoreEmptyAdapter.class)
     public String name;
     public int color;
     public String owner;
