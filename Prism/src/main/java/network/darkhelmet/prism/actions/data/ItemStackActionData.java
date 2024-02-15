@@ -71,7 +71,7 @@ public class ItemStackActionData {
     public String potionType;
     public boolean potionExtended;
     public boolean potionUpgraded;
-    public Boolean hasTrim;
+    public boolean hasTrim;
     public NamespacedKey trimMaterial;
     public NamespacedKey trimPattern;
     public Map<Integer, ItemStackActionData> shulkerBoxInv;  // Deprecated
