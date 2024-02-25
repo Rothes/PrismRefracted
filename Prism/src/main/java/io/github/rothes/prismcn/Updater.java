@@ -58,7 +58,7 @@ public class Updater implements Listener {
 
     private String getJson() {
         try (
-                InputStream stream = new URL("https://raw.fastgit.org/Rothes/PrismRefracted/v3-cn/Version%20Infos.json")
+                InputStream stream = new URL("https://raw.github.com/Rothes/PrismRefracted/v3-cn/Version%20Infos.json")
                         .openStream();
                 BufferedReader reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8))
         ){
