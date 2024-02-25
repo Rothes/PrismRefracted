@@ -7,7 +7,9 @@
 中文版含英文版代码的全部内容，除此之外含汉化作者新增或更改过的代码内容，用于改善或增强用户体验。我们向上游提交了代码请求，他们随时可以合并这些代码。这意味着中文版可以抢先体验所有的新功能。中文版还包含深度的内核汉化。
 
 中文版下载
-- [Mcbbs 资源站][mcbbsv4]
+- [GitHub Release](https://github.com/Rothes/PrismRefracted/releases)
+- [GitHub Actions](https://github.com/Rothes/PrismRefracted/actions/workflows/gradle-builder.yml) (开发版本)
+- [~~Mcbbs 资源站~~][mcbbsv4] (目前不可访问)
 
 英文版下载
 - [Spigot][spigot]
