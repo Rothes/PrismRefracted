@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 
 public class Updater implements Listener {
 
@@ -37,7 +38,7 @@ public class Updater implements Listener {
         Bukkit.getPluginManager().registerEvents(this, Prism.getInstance());
         PrismScheduler.runTaskTimerAsynchronously(() -> {
             try {
-                checkJson(getJson());
+                checkJson(getJson("https://mirror.ghproxy.com/https://raw.githubusercontent.com/Rothes/PrismRefracted/v3-cn/Version%20Infos.json"));
             } catch (IllegalStateException | NullPointerException ignored) {
 //                Prism.warn("§c无法正常解析版本信息 Json, 请更新您的插件至最新版本: " + e);
             }
@@ -56,10 +57,9 @@ public class Updater implements Listener {
         });
     }
 
-    private String getJson() {
+    private String getJson(String link) {
         try (
-                InputStream stream = new URL("https://raw.github.com/Rothes/PrismRefracted/v3-cn/Version%20Infos.json")
-                        .openStream();
+                InputStream stream = new URL(link).openStream();
                 BufferedReader reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8))
         ){
             StringBuilder jsonBuilder = new StringBuilder();
@@ -68,7 +68,10 @@ public class Updater implements Listener {
             }
             return jsonBuilder.toString();
         } catch (IOException e) {
-            // e.printStackTrace();
+//             Prism.getInstance().getLogger().log(Level.SEVERE, "Failed to check update:", e);
+        }
+        if (link.equals("https://mirror.ghproxy.com/https://raw.githubusercontent.com/Rothes/PrismRefracted/v3-cn/Version%20Infos.json")) {
+            return getJson("https://raw.githubusercontent.com/Rothes/PrismRefracted/v3-cn/Version%20Infos.json");
         }
         return null;
     }
