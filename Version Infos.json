@@ -48,14 +48,6 @@
         "zh-CN": "§b3.4.2-CN-b2 为一个实验性版本. 若您发现任何问题, 请向我们反馈."
       }
     },
-    "0-696969-MCBBS":  {
-      "Log_Level": "Info",
-      "Actions": [],
-      "Message_Times": 1,
-      "Message": {
-        "zh-CN": "§b通知: 由于此前用于发布的站点暂时无法访问, 此后本插件可能长期\n§b 仅发布于 GitHub. 若无法访问, 请检查您的网络环境.\n§b项目 GitHub 页面: https://github.com/Rothes/PrismRefracted"
-      }
-    },
     "0-233": {
       "Log_Level": "Info",
       "Actions": [],
